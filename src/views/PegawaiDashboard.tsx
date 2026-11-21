@@ -11,7 +11,10 @@ import {
   CalendarClock,
   CheckCircle2,
   ArrowRight,
+  Clock,
+  ShieldCheck,
 } from 'lucide-react';
+import { KpiGraduatedStrip, PageBannerHeader } from '../components/KpiVisuals';
 import { addSemestersToDate, addWorkingDays, formatDateIndo, formatTimeIndo } from '../lib/dateUtils';
 import { prepareDocumentUpload } from '../lib/fileUtils';
 import { getStatusLabel, getStatusTextClass } from '../lib/statusUtils';
@@ -695,15 +698,18 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
   // === RENDER BY ACTIVE MENU ===
   if (activeMenu === 'rekomendasi') {
     return (
-      <div className="max-w-4xl space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Pengajuan Surat Rekomendasi Tugas Belajar</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Lengkapi rencana studi dan 4 berkas wajib untuk penerbitan Surat Rekomendasi Biro Kepegawaian.
-          </p>
-        </div>
+      <div className="space-y-6">
+        <PageBannerHeader
+          eyebrow="LAYANAN SURAT REKOMENDASI"
+          title="Pengajuan Surat Rekomendasi Tugas Belajar"
+          description="Lengkapi rencana studi dan 4 berkas wajib untuk penerbitan Surat Rekomendasi Biro Kepegawaian."
+        />
 
-        <form onSubmit={handleSubmitRekomendasi} className="bg-white border border-slate-200 rounded-xl p-6 space-y-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <form
+            onSubmit={handleSubmitRekomendasi}
+            className="lg:col-span-8 kpi-card p-6 space-y-5"
+          >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">Jenjang Pendidikan</label>
@@ -801,13 +807,61 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg shadow-xs whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               Kirim Pengajuan Rekomendasi
             </button>
           </div>
-        </form>
+          </form>
+
+          <aside className="lg:col-span-4 space-y-4">
+            <div className="kpi-card overflow-hidden">
+              <div className="bg-[#C8102E] px-5 py-3.5 text-white">
+                <p className="text-[10px] font-extrabold uppercase tracking-wider text-red-100">
+                  RINGKASAN ALUR
+                </p>
+                <h3 className="text-sm font-bold mt-0.5">6 Tahapan Surat Rekomendasi</h3>
+              </div>
+              <ol className="p-5 space-y-2.5 text-xs text-slate-700">
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono font-bold text-[#A50D26]">01.</span>
+                  <span>Pengajuan berkas rencana studi oleh Pegawai</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono font-bold text-[#A50D26]">02.</span>
+                  <span>Persetujuan / ACC Pimpinan Unit Kerja</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono font-bold text-[#A50D26]">03.</span>
+                  <span>Verifikasi Admin Daerah (khusus Kantor SAR)</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono font-bold text-[#A50D26]">04.</span>
+                  <span>Verifikasi kelengkapan oleh Admin Pusat</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono font-bold text-[#A50D26]">05.</span>
+                  <span>Read & Confirm Kepala Biro Kepegawaian</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="font-mono font-bold text-[#A50D26]">06.</span>
+                  <span>Penerbitan PDF Surat Rekomendasi resmi</span>
+                </li>
+              </ol>
+            </div>
+            <div className="kpi-card p-5 space-y-2 text-xs">
+              <div className="flex items-center gap-2 font-bold text-slate-900">
+                <ShieldCheck className="w-4 h-4 text-[#C8102E]" />
+                Ketentuan Akreditasi
+              </div>
+              <p className="text-slate-600 leading-relaxed">
+                Program studi tujuan minimal berakreditasi <strong>Baik Sekali (B)</strong> atau{' '}
+                <strong>Unggul (A)</strong> sesuai SE Menpan RB No. 28/2021.
+              </p>
+            </div>
+          </aside>
+        </div>
       </div>
     );
   }
@@ -815,22 +869,22 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
   if (activeMenu === 'pengajuan_beasiswa' || activeMenu === 'pengajuan_mandiri') {
     const jenis = activeMenu === 'pengajuan_beasiswa' ? 'beasiswa' : 'mandiri';
     return (
-      <div className="max-w-4xl space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            Pengajuan Tugas Belajar {jenis === 'beasiswa' ? 'Beasiswa' : 'Biaya Mandiri'}
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            {jenis === 'beasiswa'
+      <div className="space-y-6">
+        <PageBannerHeader
+          eyebrow={jenis === 'beasiswa' ? 'TUGAS BELAJAR JALUR BEASISWA' : 'TUGAS BELAJAR BIAYA MANDIRI'}
+          title={`Pengajuan Tugas Belajar ${jenis === 'beasiswa' ? 'Beasiswa' : 'Biaya Mandiri'}`}
+          description={
+            jenis === 'beasiswa'
               ? 'Alur 11 tahapan meliputi seleksi administrasi, penilaian wawancara Tim Assessor SDM, seleksi kampus, SK PPK, dan perjanjian bermaterai.'
-              : 'Alur 8 tahapan biaya mandiri di luar jam kerja dinas dengan izin pimpinan unit, konfirmasi Kepala Biro, dan SK digital PPK.'}
-          </p>
-        </div>
+              : 'Alur 8 tahapan biaya mandiri di luar jam kerja dinas dengan izin pimpinan unit, konfirmasi Kepala Biro, dan SK digital PPK.'
+          }
+        />
 
-        <form
-          onSubmit={(e) => handleSubmitTB(e, jenis)}
-          className="bg-white border border-slate-200 rounded-xl p-6 space-y-5"
-        >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <form
+            onSubmit={(e) => handleSubmitTB(e, jenis)}
+            className="lg:col-span-8 kpi-card p-6 space-y-5"
+          >
           {issuedRek.length > 0 && (
             <div className="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
               <label className="block text-xs font-bold text-emerald-900 mb-1.5">
@@ -943,49 +997,77 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg shadow-xs whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               Kirim Pengajuan Tugas Belajar
             </button>
           </div>
-        </form>
+          </form>
+
+          <aside className="lg:col-span-4 space-y-4">
+            <div className="kpi-card overflow-hidden">
+              <div className="bg-[#C8102E] px-5 py-3.5 text-white">
+                <p className="text-[10px] font-extrabold uppercase tracking-wider text-red-100">
+                  INFORMASI JALUR
+                </p>
+                <h3 className="text-sm font-bold mt-0.5">
+                  {jenis === 'beasiswa' ? 'Skema Beasiswa (11 Tahap)' : 'Skema Biaya Mandiri (8 Tahap)'}
+                </h3>
+              </div>
+              <div className="p-5 space-y-3 text-xs text-slate-600 leading-relaxed">
+                <p>
+                  {jenis === 'beasiswa'
+                    ? 'Meliputi seleksi administrasi pusat, penilaian wawancara Tim Assessor SDM (passing grade), pengunggahan LoA kampus, konfirmasi Kepala Biro, TTD digital BSrE PPK, dan Perjanjian Bermaterai.'
+                    : 'Diperuntukkan bagi PNS yang menempuh studi di luar jam dinas dengan pembiayaan pribadi, tanpa mengganggu tugas operasional, dan tetap memerlukan SK Tugas Belajar bertanda tangan BSrE.'}
+                </p>
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                  <span className="text-slate-500">Rekomendasi terbit Anda</span>
+                  <span className="font-mono font-bold text-[#A50D26]">{issuedRek.length} surat</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
     );
   }
 
   if (activeMenu === 'alur_beasiswa') {
-    const groups: Array<{ key: 'rekomendasi' | 'beasiswa' | 'mandiri' | 'pencantuman_gelar'; title: string }> = [
-      { key: 'rekomendasi', title: '01. Alur Surat Rekomendasi (6 Langkah)' },
-      { key: 'beasiswa', title: '02. Alur Tugas Belajar Beasiswa (11 Langkah)' },
-      { key: 'mandiri', title: '03. Alur Tugas Belajar Biaya Mandiri (8 Langkah)' },
-      { key: 'pencantuman_gelar', title: '04. Alur Pencantuman Gelar SIASN BKN (6 Langkah)' },
+    const groups: Array<{ key: 'rekomendasi' | 'beasiswa' | 'mandiri' | 'pencantuman_gelar'; title: string; badge: string }> = [
+      { key: 'rekomendasi', title: '01. Alur Surat Rekomendasi', badge: '6 Langkah' },
+      { key: 'beasiswa', title: '02. Alur Tugas Belajar Beasiswa', badge: '11 Langkah' },
+      { key: 'mandiri', title: '03. Alur Tugas Belajar Biaya Mandiri', badge: '8 Langkah' },
+      { key: 'pencantuman_gelar', title: '04. Alur Pencantuman Gelar SIASN BKN', badge: '6 Langkah' },
     ];
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Panduan & Alur Layanan SITUBEL</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Mengacu pada SE Menpan RB No. 28/2021, SE Kepala BKN No. 15/2024, dan Perka Basarnas No. 10/2024.
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="PEDOMAN & REGULASI LAYANAN"
+          title="Panduan & Alur Layanan SITUBEL"
+          description="Mengacu pada SE Menpan RB No. 28/2021, SE Kepala BKN No. 15/2024, dan Perka Basarnas No. 10/2024."
+        />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {groups.map((g) => {
+          {groups.map((g, gi) => {
             const steps = workflowSteps
               .filter((s) => s.jenis_pengajuan === g.key && s.is_active)
               .sort((a, b) => a.urutan - b.urutan);
+            const topColors = ['bg-[#C8102E]', 'bg-[#C8102E]', 'bg-[#C8102E]', 'bg-[#C8102E]'];
             return (
-              <div key={g.key} className="bg-white border border-slate-200 rounded-xl p-5">
-                <h2 className="text-sm font-bold text-slate-900 pb-3 border-b border-slate-200">
-                  {g.title}
-                </h2>
-                <ol className="mt-3 space-y-2 text-xs text-slate-700">
+              <div key={g.key} className="kpi-card overflow-hidden">
+                <div className={`${topColors[gi % topColors.length]} px-5 py-3.5 text-white flex items-center justify-between`}>
+                  <h2 className="text-sm font-bold">{g.title}</h2>
+                  <span className="px-2 py-0.5 rounded bg-white/20 text-[10px] font-mono font-bold">
+                    {g.badge}
+                  </span>
+                </div>
+                <ol className="p-5 space-y-2.5 text-xs text-slate-700">
                   {steps.map((st) => (
                     <li key={st.id} className="flex items-start gap-2.5">
-                      <span className="font-mono font-bold text-orange-700 tabular-nums shrink-0">
-                        {String(st.urutan).padStart(2, '0')}.
+                      <span className="w-6 h-5 rounded bg-red-50 border border-red-200/80 font-mono font-bold text-[10px] text-[#A50D26] tabular-nums inline-flex items-center justify-center shrink-0 mt-0.5">
+                        {String(st.urutan).padStart(2, '0')}
                       </span>
-                      <span>{st.nama_step}</span>
+                      <span className="leading-relaxed">{st.nama_step}</span>
                     </li>
                   ))}
                 </ol>
@@ -1000,34 +1082,37 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
   if (activeMenu === 'monev') {
     return (
       <div className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Laporan Bulanan & Monev KHS Semester</h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Laporkan progres belajar bulanan dan unggah Kartu Hasil Studi (KHS) setiap akhir semester.
-            </p>
-          </div>
-          <div className="flex items-center gap-1 p-1 bg-slate-200/70 rounded-lg">
-            <button
-              type="button"
-              onClick={() => setMonevTab('semester')}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-colors ${
-                monevTab === 'semester' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
-              }`}
-            >
-              Monev Semester (KHS)
-            </button>
-            <button
-              type="button"
-              onClick={() => setMonevTab('bulanan')}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-md transition-colors ${
-                monevTab === 'bulanan' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600'
-              }`}
-            >
-              Laporan Progres Bulanan
-            </button>
-          </div>
-        </div>
+        <PageBannerHeader
+          eyebrow="PELAPORAN PROGRES AKADEMIK"
+          title="Laporan Bulanan & Monev KHS Semester"
+          description="Laporkan progres belajar bulanan dan unggah Kartu Hasil Studi (KHS) setiap akhir semester."
+          rightSlot={
+            <div className="inline-flex items-center gap-1 p-1 bg-slate-200/80 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setMonevTab('semester')}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                  monevTab === 'semester'
+                    ? 'bg-[#C8102E] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Monev Semester (KHS)
+              </button>
+              <button
+                type="button"
+                onClick={() => setMonevTab('bulanan')}
+                className={`px-3.5 py-1.5 text-xs font-bold rounded-md transition-colors ${
+                  monevTab === 'bulanan'
+                    ? 'bg-[#C8102E] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                Laporan Progres Bulanan
+              </button>
+            </div>
+          }
+        />
 
         {activeStudies.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-xl p-10 text-center">
@@ -1291,12 +1376,11 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
   if (activeMenu === 'perpanjangan') {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Usulan Perpanjangan Masa Belajar</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Ajukan perpanjangan masa studi apabila diperlukan. SK Perpanjangan akan otomatis memperbarui durasi studi induk.
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="LAYANAN PERPANJANGAN STUDI"
+          title="Usulan Perpanjangan Masa Belajar"
+          description="Ajukan perpanjangan masa studi apabila diperlukan. SK Perpanjangan akan otomatis memperbarui durasi studi induk."
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           <form
@@ -1407,12 +1491,11 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
   if (activeMenu === 'pencantuman_gelar') {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Pelaporan Selesai Studi & Pencantuman Gelar (BKN)</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Laporkan kelulusan maksimal 15 hari kerja pasca tanggal lulus untuk pengusulan ke SIASN BKN (SE Kepala BKN No. 15/2024).
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="KELULUSAN & SIASN BKN"
+          title="Pelaporan Selesai Studi & Pencantuman Gelar (BKN)"
+          description="Laporkan kelulusan maksimal 15 hari kerja pasca tanggal lulus untuk pengusulan ke SIASN BKN (SE Kepala BKN No. 15/2024)."
+        />
 
         <form onSubmit={handleSubmitPencantumanGelar} className="bg-white border border-slate-200 rounded-xl p-6 space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -1579,33 +1662,32 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
   const activeRecord =
     allMyRecords.find((r) => r.key === selectedHistoryKey) ?? allMyRecords[0] ?? null;
 
-  // === FULL-PAGE RIWAYAT & DETAIL BERKAS VIEW (matching screenshot layout) ===
+  // === FULL-PAGE RIWAYAT & DETAIL BERKAS VIEW ===
   if (activeMenu === 'riwayat' || activeMenu === 'details_berkas') {
     return (
       <>
         <div className="space-y-5">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900">
-                {activeMenu === 'details_berkas'
-                  ? 'Detail & Berkas Pengajuan Saya'
-                  : 'Riwayat & Alur Progres Pengajuan'}
-              </h1>
-              <p className="text-sm text-slate-500 mt-1">
-                Pantau seluruh tahapan persetujuan beserta tanggal & jam WIB serta pratinjau berkas persyaratan terkini.
-              </p>
-            </div>
-            {activeRecord && (
-              <button
-                type="button"
-                onClick={() => onOpenDossier({ type: activeRecord.type, id: activeRecord.id })}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg whitespace-nowrap shrink-0"
-              >
-                <Eye className="w-4 h-4" />
-                Buka Dossier & Aksi ({activeRecord.noReg})
-              </button>
-            )}
-          </div>
+          <PageBannerHeader
+            eyebrow="PELACAKAN PROGRES & DOKUMEN"
+            title={
+              activeMenu === 'details_berkas'
+                ? 'Detail & Berkas Pengajuan Saya'
+                : 'Riwayat & Alur Progres Pengajuan'
+            }
+            description="Pantau seluruh tahapan persetujuan beserta tanggal & jam WIB serta pratinjau berkas persyaratan terkini."
+            rightSlot={
+              activeRecord ? (
+                <button
+                  type="button"
+                  onClick={() => onOpenDossier({ type: activeRecord.type, id: activeRecord.id })}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg shadow-xs whitespace-nowrap shrink-0"
+                >
+                  <Eye className="w-4 h-4" />
+                  Buka Dossier & Aksi ({activeRecord.noReg})
+                </button>
+              ) : undefined
+            }
+          />
 
           {allMyRecords.length === 0 ? (
             <div className="bg-white border border-slate-200 rounded-xl p-12 text-center space-y-2">
@@ -1645,7 +1727,7 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
                         <span className={`text-[11px] font-semibold truncate ${getStatusTextClass(item.status)}`}>
                           {getStatusLabel(item.status)}
                         </span>
-                        <span className="text-[10px] font-mono text-slate-400 tabular-nums shrink-0">
+                        <span className="text-[10px] font-mono text-slate-600 tabular-nums shrink-0">
                           {formatDateIndo(item.updated, true)}, {formatTimeIndo(item.updated)}
                         </span>
                       </div>
@@ -1714,98 +1796,147 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
     );
   }
 
+  const completedMyRecords = allMyRecords.filter((r) =>
+    ['rekomendasi_terbit', 'sk_terbit', 'sedang_belajar', 'selesai_aktif', 'ms'].includes(r.status)
+  ).length;
+  const myProgressPct =
+    allMyRecords.length > 0 ? Math.round((completedMyRecords / allMyRecords.length) * 100) : 0;
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            Selamat datang, {user.nama_lengkap}
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            {user.jabatan} · {user.unit_kerja_nama} · <span className="font-mono">{user.nip}</span>
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => onSelectMenu('rekomendasi')}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg whitespace-nowrap shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          Ajukan Rekomendasi Baru
-        </button>
-      </div>
-
-      {/* KPI Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Surat Rekomendasi</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">{myRek.length}</p>
-          <p className="text-[11px] text-emerald-700 mt-0.5">{issuedRek.length} telah terbit</p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Pengajuan Tugas Belajar</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">{myTb.length}</p>
-          <p className="text-[11px] text-orange-700 mt-0.5">{activeStudies.length} sedang belajar aktif</p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Laporan Monev KHS</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">{myMonev.length}</p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Semester terlapor</p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Perpanjangan & Gelar</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">
-            {myPpj.length + myPg.length}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
-            {myPpj.length} perpanjangan · {myPg.length} gelar
-          </p>
-        </div>
-      </div>
-
-      {/* Quick Service Shortcuts on Dashboard */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {[
-          { id: 'rekomendasi', title: 'Surat Rekomendasi', desc: '4 berkas wajib · 6 tahap', icon: FileText },
-          { id: 'pengajuan_beasiswa', title: 'Tubel Beasiswa', desc: 'LPDP / Bappenas / DIPA', icon: GraduationCap },
-          { id: 'pengajuan_mandiri', title: 'Tubel Biaya Mandiri', desc: 'Kuliah luar jam dinas', icon: BookOpenCheck },
-          { id: 'pencantuman_gelar', title: 'Pencantuman Gelar', desc: 'Usulan SIASN BKN 15 hari', icon: Award },
-        ].map((srv) => {
-          const Icon = srv.icon;
-          return (
+      {/* Crisp White & Red Welcome Banner — Zero Black */}
+      <PageBannerHeader
+        eyebrow="PORTAL PEGAWAI SITUBEL · BASARNAS"
+        title={`Selamat datang, ${user.nama_lengkap}`}
+        description={`${user.jabatan} · ${user.unit_kerja_nama} · NIP ${user.nip}`}
+        rightSlot={
+          <div className="flex flex-wrap items-center gap-2.5">
             <button
-              key={srv.id}
               type="button"
-              onClick={() => onSelectMenu(srv.id)}
-              className="text-left bg-white border border-slate-200 hover:border-orange-500 rounded-xl p-4 transition-colors group"
+              onClick={() => onSelectMenu('riwayat')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-[#A50D26] bg-[#FDF2F4] hover:bg-[#FCE7EA] border border-[#F5C6CE] rounded-lg transition-colors whitespace-nowrap"
             >
-              <div className="flex items-center justify-between">
-                <Icon className="w-5 h-5 text-orange-600" />
-                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-orange-600 transition-colors" />
-              </div>
-              <p className="text-sm font-bold text-slate-900 mt-3">{srv.title}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{srv.desc}</p>
+              <Clock className="w-4 h-4" />
+              Alur Progres
             </button>
-          );
-        })}
+            <button
+              type="button"
+              onClick={() => onSelectMenu('rekomendasi')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg transition-colors whitespace-nowrap"
+            >
+              <Plus className="w-4 h-4" />
+              Ajukan Rekomendasi Baru
+            </button>
+          </div>
+        }
+      />
+
+      {/* Signature 4-Tier Graduated Crimson KPI Strip */}
+      <KpiGraduatedStrip
+        items={[
+          {
+            label: 'Surat Rekomendasi',
+            value: myRek.length,
+            sublabel: `${issuedRek.length} surat telah terbit`,
+            icon: FileText,
+            onClick: () => onSelectMenu('rekomendasi'),
+          },
+          {
+            label: 'Tugas Belajar',
+            value: myTb.length,
+            sublabel: `${activeStudies.length} sedang belajar aktif`,
+            icon: GraduationCap,
+            onClick: () => onSelectMenu('pengajuan_beasiswa'),
+          },
+          {
+            label: 'Laporan Monev KHS',
+            value: myMonev.length,
+            sublabel: 'Semester telah dilaporkan',
+            icon: Clock,
+            onClick: () => onSelectMenu('monev'),
+          },
+          {
+            label: 'Perpanjangan & Gelar',
+            value: myPpj.length + myPg.length,
+            sublabel: `${myPpj.length} perpanjangan · ${myPg.length} gelar BKN`,
+            icon: Award,
+            onClick: () => onSelectMenu('pencantuman_gelar'),
+          },
+        ]}
+      />
+
+      {/* Full-Width Quick Service Launch Deck */}
+      <div className="kpi-card p-5">
+        <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+          <div>
+            <h2 className="text-sm font-bold text-slate-900">Akses Cepat Layanan Tugas Belajar</h2>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Pilih jenis pengajuan untuk memulai formulir digital SITUBEL
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onSelectMenu('alur_beasiswa')}
+            className="text-xs font-bold text-[#A50D26] hover:text-[#C8102E] whitespace-nowrap"
+          >
+            Lihat Panduan →
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4">
+          {[
+            { id: 'rekomendasi', title: 'Surat Rekomendasi', desc: '4 berkas wajib · 6 tahap', icon: FileText },
+            { id: 'pengajuan_beasiswa', title: 'Tubel Beasiswa', desc: 'LPDP / Bappenas / DIPA · 11 tahap', icon: GraduationCap },
+            { id: 'pengajuan_mandiri', title: 'Tubel Biaya Mandiri', desc: 'Kuliah luar jam dinas · 8 tahap', icon: BookOpenCheck },
+            { id: 'pencantuman_gelar', title: 'Pencantuman Gelar', desc: 'Usulan SIASN BKN · 15 hari kerja', icon: Award },
+          ].map((srv) => {
+            const Icon = srv.icon;
+            return (
+              <button
+                key={srv.id}
+                type="button"
+                onClick={() => onSelectMenu(srv.id)}
+                className="text-left bg-slate-50/70 hover:bg-[#FDF2F4] border border-slate-200 hover:border-[#C8102E] rounded-xl p-4 transition-colors duration-150 group flex flex-col justify-between"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="w-9 h-9 rounded-lg bg-[#FDF2F4] text-[#C8102E] border border-[#F5C6CE] flex items-center justify-center group-hover:bg-[#C8102E] group-hover:text-white group-hover:border-[#C8102E] transition-colors">
+                    <Icon className="w-4 h-4" />
+                  </span>
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#C8102E] group-hover:translate-x-0.5 transition-all" />
+                </div>
+                <div className="mt-3">
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-[#C8102E]">
+                    {srv.title}
+                  </p>
+                  <p className="text-[11px] text-slate-600 mt-0.5">{srv.desc}</p>
+                </div>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Main Applications Table */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-          <h2 className="text-base font-bold text-slate-900">Daftar Pengajuan & Berkas Saya</h2>
+      <div className="kpi-card overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-bold text-slate-900">Daftar Pengajuan & Berkas Saya</h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Klik “Alur Progres” untuk melacak tahapan secara mendetail atau “Dossier” untuk tindakan berkas.
+            </p>
+          </div>
           <button
             type="button"
             onClick={() => onSelectMenu('riwayat')}
-            className="text-xs font-semibold text-indigo-700 hover:text-indigo-900"
+            className="text-xs font-bold text-[#A50D26] hover:text-[#C8102E] whitespace-nowrap"
           >
             Lihat Alur Progres Lengkap →
           </button>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse kpi-table">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+              <tr>
                 <th className="py-3 px-5">No. Registrasi</th>
                 <th className="py-3 px-4">Layanan</th>
                 <th className="py-3 px-4">Program Studi & Perguruan Tinggi</th>
@@ -1824,11 +1955,11 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
                 </tr>
               ) : (
                 allMyRecords.map((item) => (
-                  <tr key={item.key} className="hover:bg-slate-50/70">
-                    <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                  <tr key={item.key}>
+                    <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                       {item.noReg}
                     </td>
-                    <td className="py-3.5 px-4 font-medium text-slate-800">{item.layanan}</td>
+                    <td className="py-3.5 px-4 font-semibold text-slate-800">{item.layanan}</td>
                     <td className="py-3.5 px-4 text-slate-600">{item.tujuan}</td>
                     <td className="py-3.5 px-4">
                       <span className={`font-semibold ${getStatusTextClass(item.status)}`}>
@@ -1846,14 +1977,14 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
                             setSelectedHistoryKey(item.key);
                             onSelectMenu('riwayat');
                           }}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg whitespace-nowrap"
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold text-[#A50D26] bg-red-50 hover:bg-red-100 border border-red-200/80 rounded-lg whitespace-nowrap transition-colors"
                         >
                           Alur Progres
                         </button>
                         <button
                           type="button"
                           onClick={() => onOpenDossier({ type: item.type, id: item.id })}
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg whitespace-nowrap"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:border-[#C8102E] hover:text-[#A50D26] rounded-lg whitespace-nowrap transition-colors"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           Dossier
@@ -1870,16 +2001,16 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
 
       {/* Perpanjangan Summary if exists */}
       {myPpj.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="kpi-card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 flex items-center gap-2">
-            <CalendarClock className="w-4 h-4 text-orange-600" />
+            <CalendarClock className="w-4 h-4 text-[#C8102E]" />
             <h2 className="text-base font-bold text-slate-900">Usulan Perpanjangan Studi Saya</h2>
           </div>
           <div className="divide-y divide-slate-100">
             {myPpj.map((p) => (
-              <div key={p.id} className="px-6 py-3.5 flex items-center justify-between gap-4 text-xs">
+              <div key={p.id} className="px-6 py-3.5 flex items-center justify-between gap-4 text-xs hover:bg-red-50/30 transition-colors">
                 <div>
-                  <p className="font-mono font-semibold text-slate-900">
+                  <p className="font-mono font-bold text-slate-900">
                     {p.no_registrasi} · Induk {p.no_reg_tb}
                   </p>
                   <p className="text-slate-600 mt-0.5">
@@ -1892,7 +2023,7 @@ export const PegawaiDashboard: React.FC<PegawaiDashboardProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenPerpanjangan(p)}
-                  className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg"
+                  className="px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:border-[#C8102E] hover:text-[#A50D26] rounded-lg transition-colors"
                 >
                   Detail
                 </button>

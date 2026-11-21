@@ -315,7 +315,7 @@ function SitubelShell() {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex bg-[#ECEEF1] text-slate-900">
       <Sidebar
         user={currentUser}
         activeMenu={activeMenu}
@@ -339,18 +339,21 @@ function SitubelShell() {
           dataVersion={dataVersion}
         />
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1440px] w-full mx-auto">
+        <main className="flex-1 p-4 sm:p-6 lg:p-7 max-w-[1480px] w-full mx-auto">
           {renderMainView()}
         </main>
 
-        <footer className="px-4 sm:px-6 lg:px-8 py-4 border-t border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
-          <p>
-            SITUBEL — Biro Kepegawaian dan Organisasi · Badan Nasional Pencarian dan Pertolongan (BASARNAS)
-          </p>
+        <footer className="px-4 sm:px-6 lg:px-7 py-3.5 border-t border-slate-200/90 bg-white flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#C8102E]" aria-hidden="true" />
+            <p className="font-medium text-slate-600">
+              SITUBEL — Biro Kepegawaian dan Organisasi · Badan Nasional Pencarian dan Pertolongan (BASARNAS)
+            </p>
+          </div>
           <button
             type="button"
             onClick={handleResetDemo}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-orange-700 transition-colors whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-[#A50D26] bg-red-50 hover:bg-red-100 border border-red-200/80 transition-colors whitespace-nowrap shrink-0"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset Data Demo

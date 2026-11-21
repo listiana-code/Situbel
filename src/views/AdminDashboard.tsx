@@ -8,13 +8,22 @@ import {
   RotateCcw,
   Upload,
   Search,
+  FileText,
+  GraduationCap,
+  FileSignature,
+  Award,
 } from 'lucide-react';
+import {
+  KpiGraduatedStrip,
+  PageBannerHeader,
+} from '../components/KpiVisuals';
 import { formatDateIndo, formatDateTimeIndo } from '../lib/dateUtils';
 import { readUploadedFileAsUrl } from '../lib/fileUtils';
 import { getRoleDisplayLabel, getStatusLabel, getStatusTextClass } from '../lib/statusUtils';
 import { generateId, Storage } from '../lib/storage';
 import { downloadTemplateDocument } from '../lib/templateDownloader';
 import { Pagination } from '../components/Pagination';
+import { useAlert } from '../components/AlertProvider';
 import { useToast } from '../components/Toast';
 import type {
   DossierTarget,
@@ -44,6 +53,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   dataVersion,
 }) => {
   const { showToast } = useToast();
+  const { showConfirm } = useAlert();
   const isDaerah = user.role === 'admin_daerah';
   const isSuper = user.role === 'super_admin';
 
@@ -164,11 +174,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     const updated = requiredDocs.map((d) =>
       d.id === docCfg.id
         ? {
-            ...d,
-            has_template: true,
-            template_file_base64: base64,
-            template_file_name: file.name,
-          }
+          ...d,
+          has_template: true,
+          template_file_base64: base64,
+          template_file_name: file.name,
+        }
         : d
     );
     Storage.updateRequiredDocs(updated);
@@ -227,19 +237,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   if (activeMenu === 'bank_soal') {
     return (
       <div className="space-y-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Bank Soal Wawancara & Passing Grade</h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Kelola pertanyaan wajib dan acak serta ambang batas kelulusan Tim Pewawancara SDM.
-            </p>
-          </div>
-        </div>
+        <PageBannerHeader
+          eyebrow="MODUL SELEKSI WAWANCARA"
+          title="Bank Soal Wawancara & Passing Grade"
+          description="Kelola pertanyaan wajib dan acak serta ambang batas kelulusan Tim Pewawancara SDM."
+        />
 
         {/* Pengaturan Passing Grade & Jumlah Acak */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-wrap items-end gap-4">
+        <div className="kpi-card p-5 flex flex-wrap items-end gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-slate-700 mb-1">
               Passing Grade Kelulusan (0–100)
             </label>
             <input
@@ -254,11 +261,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 });
                 onUpdated();
               }}
-              className="w-36 px-3 py-2 text-sm font-mono border border-slate-300 rounded-lg"
+              className="w-36 px-3 py-2 text-sm font-mono font-bold bg-[#F4F5F7] focus:bg-white border border-slate-300 rounded-lg focus:border-[#C8102E] focus:outline-none"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-slate-700 mb-1">
               Jumlah Soal Acak per Peserta
             </label>
             <input
@@ -273,16 +280,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 });
                 onUpdated();
               }}
-              className="w-36 px-3 py-2 text-sm font-mono border border-slate-300 rounded-lg"
+              className="w-36 px-3 py-2 text-sm font-mono font-bold bg-[#F4F5F7] focus:bg-white border border-slate-300 rounded-lg focus:border-[#C8102E] focus:outline-none"
             />
           </div>
-          <p className="text-xs text-slate-500 pb-2">
-            Skala baku: MS = 100 · CMS = 75 · KMS = 50 · TMS = 25
+          <p className="text-xs font-medium text-slate-600 bg-red-50 border border-red-200/70 rounded-lg px-3 py-2">
+            Skala baku: <strong className="text-[#A50D26]">MS = 100</strong> · CMS = 75 · KMS = 50 · TMS = 25
           </p>
         </div>
 
         {/* Add Soal Form */}
-        <form onSubmit={handleAddSoal} className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+        <form onSubmit={handleAddSoal} className="kpi-card p-5 space-y-3">
           <h2 className="text-sm font-bold text-slate-900">Tambah Pertanyaan Baru</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <input
@@ -291,12 +298,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               value={newSoalKat}
               onChange={(e) => setNewSoalKat(e.target.value)}
               placeholder="Kategori (mis. Inovasi Operasi SAR)"
-              className="px-3 py-2 text-xs border border-slate-300 rounded-lg"
+              className="px-3 py-2 text-xs bg-[#F4F5F7] focus:bg-white border border-slate-300 rounded-lg focus:border-[#C8102E] focus:outline-none"
             />
             <select
               value={newSoalJenis}
               onChange={(e) => setNewSoalJenis(e.target.value as 'wajib' | 'acak')}
-              className="px-3 py-2 text-xs border border-slate-300 rounded-lg bg-white"
+              className="px-3 py-2 text-xs border border-slate-300 rounded-lg bg-[#F4F5F7] focus:bg-white focus:border-[#C8102E] focus:outline-none"
             >
               <option value="wajib">Soal Wajib</option>
               <option value="acak">Soal Acak</option>
@@ -306,7 +313,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               value={newSoalPanduan}
               onChange={(e) => setNewSoalPanduan(e.target.value)}
               placeholder="Panduan indikator penilaian..."
-              className="px-3 py-2 text-xs border border-slate-300 rounded-lg"
+              className="px-3 py-2 text-xs bg-[#F4F5F7] focus:bg-white border border-slate-300 rounded-lg focus:border-[#C8102E] focus:outline-none"
             />
           </div>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -316,11 +323,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               value={newSoalTanya}
               onChange={(e) => setNewSoalTanya(e.target.value)}
               placeholder="Tulis teks pertanyaan wawancara lengkap..."
-              className="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-lg"
+              className="flex-1 px-3 py-2 text-xs bg-[#F4F5F7] focus:bg-white border border-slate-300 rounded-lg focus:border-[#C8102E] focus:outline-none"
             />
             <button
               type="submit"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg whitespace-nowrap shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg whitespace-nowrap shrink-0 shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               Simpan Soal
@@ -329,17 +336,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         </form>
 
         {/* List Soal */}
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-3.5 border-b border-slate-200 flex items-center justify-between">
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900">Daftar Bank Soal ({bankSoal.length})</h2>
           </div>
           <div className="divide-y divide-slate-100">
             {bankSoal.map((s, idx) => (
-              <div key={s.id} className="px-6 py-4 flex items-start justify-between gap-4 text-xs">
+              <div key={s.id} className="px-6 py-4 flex items-start justify-between gap-4 text-xs hover:bg-red-50/30 transition-colors">
                 <div className="space-y-1">
-                  <p className="font-semibold text-slate-900">
+                  <p className="font-bold text-slate-900">
                     {idx + 1}. {s.kategori} ·{' '}
-                    <span className={s.jenis === 'wajib' ? 'text-orange-700' : 'text-slate-500'}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${s.jenis === 'wajib'
+                          ? 'bg-red-50 text-[#A50D26] border border-red-200'
+                          : 'bg-slate-100 text-slate-600'
+                        }`}
+                    >
                       {s.jenis === 'wajib' ? 'Wajib' : 'Acak'}
                     </span>
                   </p>
@@ -348,13 +360,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
+                    const ok = await showConfirm({
+                      title: 'Hapus Soal Wawancara?',
+                      message: `Pertanyaan kategori "${s.kategori}" (${s.jenis === 'wajib' ? 'Soal Wajib' : 'Soal Acak'}) akan dihapus dari Bank Soal: "${s.pertanyaan.slice(0, 90)}${s.pertanyaan.length > 90 ? '…' : ''}"`,
+                      tone: 'danger',
+                      confirmLabel: 'Ya, Hapus Soal',
+                      cancelLabel: 'Batal',
+                    });
+                    if (!ok) return;
                     Storage.deleteSoalWawancara(s.id);
+                    Storage.addAuditLog({
+                      user,
+                      aksi: 'Hapus Soal Wawancara',
+                      entitas: s.kategori,
+                      detail: `Menghapus soal ${s.jenis}: ${s.pertanyaan.slice(0, 60)}`,
+                    });
                     showToast('info', 'Soal dihapus', s.kategori);
                     onUpdated();
                   }}
-                  aria-label="Hapus soal"
-                  className="p-1.5 text-slate-400 hover:text-red-700 rounded-lg shrink-0"
+                  aria-label={`Hapus soal ${s.kategori}`}
+                  title="Hapus soal"
+                  className="p-1.5 text-slate-500 hover:text-[#C8102E] hover:bg-red-50 rounded-lg shrink-0 transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -373,14 +400,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Evaluasi Monev Semester & Laporan Bulanan</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Tinjau KHS semester, tren IPK, serta laporan progres bulanan pegawai tugas belajar.
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="MONITORING & EVALUASI AKADEMIK"
+          title="Evaluasi Monev Semester & Laporan Bulanan"
+          description="Tinjau KHS semester, tren IPK, serta laporan progres bulanan pegawai tugas belajar."
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="kpi-card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200">
             <h2 className="text-sm font-bold text-slate-900">Laporan Monev KHS Semester ({monevs.length})</h2>
           </div>
@@ -413,13 +439,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </td>
                     <td className="py-3.5 px-4">
                       <span
-                        className={`font-semibold ${
-                          m.status_evaluasi === 'diterima'
+                        className={`font-semibold ${m.status_evaluasi === 'diterima'
                             ? 'text-emerald-700'
                             : m.status_evaluasi === 'perlu_perbaikan'
-                            ? 'text-amber-700'
-                            : 'text-blue-700'
-                        }`}
+                              ? 'text-amber-700'
+                              : 'text-blue-700'
+                          }`}
                       >
                         {m.status_evaluasi.replace('_', ' ')}
                       </span>
@@ -520,14 +545,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   if (activeMenu === 'konfigurasi_alur') {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Konfigurasi Alur Persetujuan & Kuota Usul Ulang</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Atur batas maksimal usul ulang pasca penolakan dan aktif/nonaktifkan tahapan workflow per layanan.
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="PENGATURAN ALUR KERJA"
+          title="Konfigurasi Alur Persetujuan & Kuota Usul Ulang"
+          description="Atur batas maksimal usul ulang pasca penolakan dan aktif/nonaktifkan tahapan workflow per layanan."
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-wrap items-center justify-between gap-4">
+        <div className="kpi-card p-5 flex flex-wrap items-center justify-between gap-4">
           <div>
             <p className="text-sm font-bold text-slate-900">Batas Maksimal Usul Ulang (max_usul_ulang)</p>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -583,21 +607,44 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       {getRoleDisplayLabel(st.role_penanggung_jawab)}
                     </td>
                     <td className="py-2.5 px-5 text-right">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const next = workflowSteps.map((x) =>
-                            x.id === st.id ? { ...x, is_active: !x.is_active } : x
-                          );
-                          Storage.updateWorkflowSteps(next);
-                          onUpdated();
-                        }}
-                        className={`text-xs font-semibold ${
-                          st.is_active ? 'text-emerald-700' : 'text-slate-400'
-                        }`}
-                      >
-                        {st.is_active ? 'Aktif' : 'Nonaktif'}
-                      </button>
+                      <div className="inline-flex items-center justify-end gap-2.5">
+                        <span
+                          className={`text-[11px] font-semibold ${
+                            st.is_active ? 'text-slate-800' : 'text-slate-500'
+                          }`}
+                        >
+                          {st.is_active ? 'Aktif' : 'Nonaktif'}
+                        </span>
+                        <button
+                          type="button"
+                          role="switch"
+                          aria-checked={st.is_active}
+                          aria-label={`${st.is_active ? 'Nonaktifkan' : 'Aktifkan'} tahapan ${st.nama_step}`}
+                          onClick={() => {
+                            const nextActive = !st.is_active;
+                            const next = workflowSteps.map((x) =>
+                              x.id === st.id ? { ...x, is_active: nextActive } : x
+                            );
+                            Storage.updateWorkflowSteps(next);
+                            showToast(
+                              'info',
+                              nextActive ? 'Tahapan diaktifkan' : 'Tahapan dinonaktifkan',
+                              st.nama_step
+                            );
+                            onUpdated();
+                          }}
+                          className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C8102E] ${
+                            st.is_active ? 'bg-[#C8102E]' : 'bg-slate-300'
+                          }`}
+                        >
+                          <span
+                            aria-hidden="true"
+                            className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-xs transition-transform duration-200 ${
+                              st.is_active ? 'translate-x-[19px]' : 'translate-x-[3px]'
+                            }`}
+                          />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -612,14 +659,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   if (activeMenu === 'konfigurasi_berkas') {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Konfigurasi Dokumen Wajib & Template</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Atur berkas persyaratan tiap layanan, format file diizinkan, batas ukuran, serta unggah template resmi Word/PDF.
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="MASTER BERKAS PERSYARATAN"
+          title="Konfigurasi Dokumen Wajib & Template"
+          description="Atur berkas persyaratan tiap layanan, format file diizinkan, batas ukuran, serta unggah template resmi Word/PDF."
+        />
 
-        <form onSubmit={handleAddRequiredDoc} className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+        <form onSubmit={handleAddRequiredDoc} className="kpi-card p-5 space-y-3">
           <h2 className="text-sm font-bold text-slate-900">Tambah Dokumen Wajib Baru</h2>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <select
@@ -748,16 +794,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   if (activeMenu === 'manajemen_user') {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            {isDaerah ? `Manajemen Pegawai ${user.unit_kerja_nama}` : 'Manajemen Pengguna SITUBEL'}
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Tambah akun pegawai baru, kelola peran akses, serta aktif/nonaktifkan status pengguna.
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="KELOLA AKSES & PENGGUNA"
+          title={isDaerah ? `Manajemen Pegawai ${user.unit_kerja_nama}` : 'Manajemen Pengguna SITUBEL'}
+          description="Tambah akun pegawai baru, kelola peran akses, serta aktif/nonaktifkan status pengguna."
+        />
 
-        <form onSubmit={handleAddUser} className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+        <form onSubmit={handleAddUser} className="kpi-card p-5 space-y-3">
           <h2 className="text-sm font-bold text-slate-900">Tambah Akun Baru</h2>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
             <input
@@ -862,9 +905,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           );
                           onUpdated();
                         }}
-                        className={`text-xs font-semibold disabled:opacity-40 ${
-                          u.status_aktif ? 'text-emerald-700' : 'text-red-700'
-                        }`}
+                        className={`text-xs font-semibold disabled:opacity-40 ${u.status_aktif ? 'text-emerald-700' : 'text-red-700'
+                          }`}
                       >
                         {u.status_aktif ? 'Aktif' : 'Nonaktif'}
                       </button>
@@ -882,14 +924,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   if (activeMenu === 'master_unit') {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Master Unit Kerja BASARNAS</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Daftar biro, direktorat pusat, dan Kantor SAR daerah yang terhubung ke alur verifikasi SITUBEL.
-          </p>
-        </div>
+        <PageBannerHeader
+          eyebrow="DATA MASTER ORGANISASI"
+          title="Master Unit Kerja BASARNAS"
+          description="Daftar biro, direktorat pusat, dan Kantor SAR daerah yang terhubung ke alur verifikasi SITUBEL."
+        />
 
-        <form onSubmit={handleAddUnit} className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+        <form onSubmit={handleAddUnit} className="kpi-card p-5 space-y-3">
           <h2 className="text-sm font-bold text-slate-900">Tambah Unit Kerja Baru</h2>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <input
@@ -981,29 +1022,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
     return (
       <div className="space-y-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Audit Log Aktivitas Sistem</h1>
-            <p className="text-sm text-slate-500 mt-1">
-              Rekam jejak seluruh verifikasi, persetujuan, penandatanganan, dan perubahan konfigurasi SITUBEL.
-            </p>
-          </div>
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="search"
-              value={filterText}
-              onChange={(e) => {
-                setFilterText(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Filter aktor, aksi, atau nomor..."
-              className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-slate-300 rounded-lg"
-            />
-          </div>
-        </div>
+        <PageBannerHeader
+          eyebrow="JEJAK AUDIT KEAMANAN"
+          title="Audit Log Aktivitas Sistem"
+          description="Rekam jejak seluruh verifikasi, persetujuan, penandatanganan, dan perubahan konfigurasi SITUBEL."
+          rightSlot={
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="search"
+                value={filterText}
+                onChange={(e) => {
+                  setFilterText(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Filter aktor, aksi, atau nomor..."
+                className="w-full pl-9 pr-3 py-2 text-xs bg-[#F4F5F7] focus:bg-white border border-slate-300 rounded-lg focus:border-[#C8102E] focus:outline-none"
+              />
+            </div>
+          }
+        />
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
+        <div className="kpi-card p-5">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -1083,92 +1123,98 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         ? 'ACC Surat Rekomendasi Daerah'
         : 'Verifikasi & Penerbitan Surat Rekomendasi'
       : activeMenu === 'seleksi_beasiswa'
-      ? isDaerah
-        ? 'ACC Tugas Belajar Beasiswa Daerah'
-        : 'Seleksi Administrasi & Wawancara Beasiswa'
-      : activeMenu === 'tubel_mandiri'
-      ? 'Layanan Tugas Belajar Biaya Mandiri'
-      : activeMenu === 'draft_sk_admin'
-      ? 'Penyusunan Draft SK Dinamis & Pemantauan TTD PPK'
-      : activeMenu === 'perpanjangan_studi'
-      ? 'Layanan Perpanjangan Masa Belajar'
-      : activeMenu === 'siasn_bkn'
-      ? 'Pencantuman Gelar & Usulan SIASN BKN'
-      : isDaerah
-      ? `Dashboard Admin Daerah — ${user.unit_kerja_nama}`
-      : isSuper
-      ? 'Dashboard Super Administrator SITUBEL'
-      : 'Dashboard Admin Kepegawaian Pusat';
+        ? isDaerah
+          ? 'ACC Tugas Belajar Beasiswa Daerah'
+          : 'Seleksi Administrasi & Wawancara Beasiswa'
+        : activeMenu === 'tubel_mandiri'
+          ? 'Layanan Tugas Belajar Biaya Mandiri'
+          : activeMenu === 'draft_sk_admin'
+            ? 'Penyusunan Draft SK Dinamis & Pemantauan TTD PPK'
+            : activeMenu === 'perpanjangan_studi'
+              ? 'Layanan Perpanjangan Masa Belajar'
+              : activeMenu === 'siasn_bkn'
+                ? 'Pencantuman Gelar & Usulan SIASN BKN'
+                : isDaerah
+                  ? `Dashboard Admin Daerah — ${user.unit_kerja_nama}`
+                  : isSuper
+                    ? 'Dashboard Super Administrator SITUBEL'
+                    : 'Dashboard Admin Kepegawaian Pusat';
+
+  const totalAllRecords = rekomendasis.length + tbs.length + pgs.length + ppjs.length;
+  const totalCompletedRecords =
+    rekomendasis.filter((r) => r.status === 'rekomendasi_terbit').length +
+    tbs.filter((t) => ['sk_terbit', 'sedang_belajar', 'selesai_aktif'].includes(t.status)).length +
+    pgs.filter((p) => p.status === 'ms').length +
+    ppjs.filter((p) => p.status === 'sk_perpanjangan_terbit').length;
+  const completionPct =
+    totalAllRecords > 0 ? Math.round((totalCompletedRecords / totalAllRecords) * 100) : 100;
+  const pendingRekFollowUp = rekomendasis.filter((r) =>
+    isDaerah
+      ? r.status === 'menunggu_acc_admin_daerah'
+      : ['verifikasi_admin', 'dikembalikan_kabi', 'terkonfirmasi_kabi'].includes(r.status)
+  ).length;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">{sectionTitle}</h1>
-          <p className="text-sm text-slate-500 mt-1">
-            {isDaerah
-              ? 'Verifikasi tingkat wilayah Kantor SAR Daerah sebelum diteruskan ke Biro Kepegawaian Pusat.'
-              : 'Verifikasi dokumen, seleksi beasiswa/mandiri, penyusunan draft SK dinamis, dan pelaporan SIASN BKN.'}
-          </p>
-        </div>
-        {activeMenu !== 'dashboard' && (
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="search"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-              placeholder="Filter nomor, nama, atau kampus..."
-              className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-slate-300 rounded-lg"
-            />
-          </div>
-        )}
-      </div>
+      <PageBannerHeader
+        eyebrow={
+          isDaerah
+            ? `ADMINISTRATOR DAERAH · ${user.unit_kerja_nama}`
+            : isSuper
+              ? 'SUPER ADMINISTRATOR · BIRO KEPEGAWAIAN PUSAT'
+              : 'ADMIN KEPEGAWAIAN PUSAT · BASARNAS RI'
+        }
+        title={sectionTitle}
+        description={
+          isDaerah
+            ? 'Verifikasi tingkat wilayah Kantor SAR Daerah sebelum diteruskan ke Biro Kepegawaian Pusat.'
+            : 'Verifikasi dokumen, seleksi beasiswa/mandiri, penyusunan draft SK dinamis, dan pelaporan SIASN BKN.'
+        }
+        rightSlot={
+          activeMenu !== 'dashboard' ? (
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="search"
+                value={filterText}
+                onChange={(e) => setFilterText(e.target.value)}
+                placeholder="Filter nomor, nama, atau kampus..."
+                className="w-full pl-9 pr-3 py-2 text-xs bg-[#F4F5F7] focus:bg-white border border-slate-300 rounded-lg focus:border-[#C8102E] focus:outline-none"
+              />
+            </div>
+          ) : undefined
+        }
+      />
 
-      {/* KPI Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Surat Rekomendasi</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">
-            {rekomendasis.length}
-          </p>
-          <p className="text-[11px] text-orange-700 mt-0.5">
-            {
-              rekomendasis.filter((r) =>
-                isDaerah
-                  ? r.status === 'menunggu_acc_admin_daerah'
-                  : ['verifikasi_admin', 'dikembalikan_kabi', 'terkonfirmasi_kabi'].includes(r.status)
-              ).length
-            }{' '}
-            perlu tindak lanjut
-          </p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Tugas Belajar (Bsw & Mdr)</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">
-            {tbs.length}
-          </p>
-          <p className="text-[11px] text-emerald-700 mt-0.5">
-            {tbs.filter((t) => t.status === 'sedang_belajar').length} sedang belajar aktif
-          </p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Siap Draft SK / TTD PPK</p>
-          <p className="text-2xl font-bold font-mono text-orange-700 mt-1 tabular-nums">
-            {draftSkQueue.length}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Tahap penerbitan SK</p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Gelar SIASN & Perpanjangan</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">
-            {pgs.length + ppjs.length}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">
-            {pgs.length} gelar · {ppjs.length} perpanjangan
-          </p>
-        </div>
-      </div>
+      {/* Signature 4-Tier Graduated Crimson KPI Strip */}
+      <KpiGraduatedStrip
+        items={[
+          {
+            label: 'Surat Rekomendasi',
+            value: rekomendasis.length,
+            sublabel: `${pendingRekFollowUp} perlu tindak lanjut`,
+            icon: FileText,
+          },
+          {
+            label: 'Tugas Belajar',
+            value: tbs.length,
+            sublabel: `${tbs.filter((t) => t.status === 'sedang_belajar').length} sedang belajar aktif`,
+            icon: GraduationCap,
+          },
+          {
+            label: 'Draft SK & TTD PPK',
+            value: draftSkQueue.length,
+            sublabel: 'Tahap penerbitan & BSrE',
+            icon: FileSignature,
+          },
+          {
+            label: 'Gelar & Perpanjangan',
+            value: pgs.length + ppjs.length,
+            sublabel: `${pgs.length} gelar SIASN · ${ppjs.length} perpanjangan`,
+            icon: Award,
+          },
+        ]}
+      />
 
       {/* Table: Rekomendasi */}
       {(activeMenu === 'dashboard' || activeMenu === 'verif_rekomendasi') && (
@@ -1211,7 +1257,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <button
                         type="button"
                         onClick={() => onOpenDossier({ type: 'rekomendasi', id: r.id })}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg whitespace-nowrap"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg whitespace-nowrap transition-colors"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         Verifikasi
@@ -1230,96 +1276,95 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         activeMenu === 'seleksi_beasiswa' ||
         activeMenu === 'tubel_mandiri' ||
         activeMenu === 'draft_sk_admin') && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">
-              {activeMenu === 'seleksi_beasiswa'
-                ? 'Daftar Pengajuan Tugas Belajar Beasiswa'
-                : activeMenu === 'tubel_mandiri'
-                ? 'Daftar Pengajuan Tugas Belajar Biaya Mandiri'
-                : activeMenu === 'draft_sk_admin'
-                ? 'Antrean Penyusunan Draft SK & Verifikasi Perjanjian'
-                : 'Pengajuan Tugas Belajar (Beasiswa & Mandiri)'}
-            </h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">
-              {(activeMenu === 'seleksi_beasiswa'
-                ? filteredBeasiswa
-                : activeMenu === 'tubel_mandiri'
-                ? filteredMandiri
-                : activeMenu === 'draft_sk_admin'
-                ? draftSkQueue
-                : tbs
-              ).length}{' '}
-              data
-            </span>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
-                  <th className="py-3 px-5">No. Registrasi</th>
-                  <th className="py-3 px-4">Pegawai & Unit</th>
-                  <th className="py-3 px-4">Jalur & Kampus</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-5 text-right">Dossier</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-xs">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <h2 className="text-base font-bold text-slate-900">
+                {activeMenu === 'seleksi_beasiswa'
+                  ? 'Daftar Pengajuan Tugas Belajar Beasiswa'
+                  : activeMenu === 'tubel_mandiri'
+                    ? 'Daftar Pengajuan Tugas Belajar Biaya Mandiri'
+                    : activeMenu === 'draft_sk_admin'
+                      ? 'Antrean Penyusunan Draft SK & Verifikasi Perjanjian'
+                      : 'Pengajuan Tugas Belajar (Beasiswa & Mandiri)'}
+              </h2>
+              <span className="text-xs font-mono text-slate-500 tabular-nums">
                 {(activeMenu === 'seleksi_beasiswa'
                   ? filteredBeasiswa
                   : activeMenu === 'tubel_mandiri'
-                  ? filteredMandiri
-                  : activeMenu === 'draft_sk_admin'
-                  ? draftSkQueue
-                  : tbs
-                ).map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/70">
-                    <td className="py-3.5 px-5">
-                      <p className="font-mono font-semibold text-slate-900">{t.no_registrasi}</p>
-                      {t.kelengkapan_sk && (
-                        <p className="font-mono text-[11px] text-slate-500">{t.kelengkapan_sk.nomor_sk}</p>
-                      )}
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <p className="font-semibold text-slate-900">{t.user_nama}</p>
-                      <p className="text-[11px] text-slate-500">{t.unit_kerja_nama}</p>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <p className="font-medium text-slate-900">
-                        {t.jenis === 'beasiswa' ? 'Beasiswa' : 'Mandiri'} · {t.universitas_tujuan}
-                      </p>
-                      <p className="text-[11px] text-slate-500">
-                        {t.jenjang} {t.program_studi}
-                      </p>
-                    </td>
-                    <td className="py-3.5 px-4">
-                      <span className={`font-semibold ${getStatusTextClass(t.status)}`}>
-                        {getStatusLabel(t.status)}
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-5 text-right">
-                      <button
-                        type="button"
-                        onClick={() => onOpenDossier({ type: 'tugas_belajar', id: t.id })}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap ${
-                          ['verifikasi_admin', 'menunggu_acc_admin_daerah', 'terkonfirmasi_kabi', 'seleksi_wawancara', 'surat_kampus_diunggah', 'perjanjian_ditandatangani'].includes(
+                    ? filteredMandiri
+                    : activeMenu === 'draft_sk_admin'
+                      ? draftSkQueue
+                      : tbs
+                ).length}{' '}
+                data
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                    <th className="py-3 px-5">No. Registrasi</th>
+                    <th className="py-3 px-4">Pegawai & Unit</th>
+                    <th className="py-3 px-4">Jalur & Kampus</th>
+                    <th className="py-3 px-4">Status</th>
+                    <th className="py-3 px-5 text-right">Dossier</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-xs">
+                  {(activeMenu === 'seleksi_beasiswa'
+                    ? filteredBeasiswa
+                    : activeMenu === 'tubel_mandiri'
+                      ? filteredMandiri
+                      : activeMenu === 'draft_sk_admin'
+                        ? draftSkQueue
+                        : tbs
+                  ).map((t) => (
+                    <tr key={t.id} className="hover:bg-slate-50/70">
+                      <td className="py-3.5 px-5">
+                        <p className="font-mono font-semibold text-slate-900">{t.no_registrasi}</p>
+                        {t.kelengkapan_sk && (
+                          <p className="font-mono text-[11px] text-slate-500">{t.kelengkapan_sk.nomor_sk}</p>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <p className="font-semibold text-slate-900">{t.user_nama}</p>
+                        <p className="text-[11px] text-slate-500">{t.unit_kerja_nama}</p>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <p className="font-medium text-slate-900">
+                          {t.jenis === 'beasiswa' ? 'Beasiswa' : 'Mandiri'} · {t.universitas_tujuan}
+                        </p>
+                        <p className="text-[11px] text-slate-500">
+                          {t.jenjang} {t.program_studi}
+                        </p>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className={`font-semibold ${getStatusTextClass(t.status)}`}>
+                          {getStatusLabel(t.status)}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-5 text-right">
+                        <button
+                          type="button"
+                          onClick={() => onOpenDossier({ type: 'tugas_belajar', id: t.id })}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap ${['verifikasi_admin', 'menunggu_acc_admin_daerah', 'terkonfirmasi_kabi', 'seleksi_wawancara', 'surat_kampus_diunggah', 'perjanjian_ditandatangani'].includes(
                             t.status
                           )
-                            ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                            : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'
-                        }`}
-                      >
-                        <Eye className="w-3.5 h-3.5" />
-                        Proses
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                              ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                              : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'
+                            }`}
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          Proses
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Table: Perpanjangan */}
       {activeMenu === 'perpanjangan_studi' && (

@@ -103,7 +103,9 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         className="m-auto p-0 bg-transparent border-0 max-w-md w-[calc(100vw-2rem)] rounded-xl overflow-visible"
       >
         {dialog && (
-          <div className="bg-white border border-slate-200 rounded-xl shadow-2xl p-6">
+          <div className="bg-white border border-slate-200 rounded-xl shadow-2xl overflow-hidden">
+            <div className="h-1.5 w-full bg-[#C8102E]" />
+            <div className="p-6">
             <div className="flex items-start gap-3.5">
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
@@ -145,11 +147,12 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     ? 'bg-red-600 hover:bg-red-700'
                     : dialog.tone === 'warning'
                     ? 'bg-orange-600 hover:bg-orange-700'
-                    : 'bg-slate-900 hover:bg-slate-800'
+                    : 'bg-[#C8102E] hover:bg-[#A50D26]'
                 }`}
               >
                 {dialog.confirmLabel}
               </button>
+            </div>
             </div>
           </div>
         )}

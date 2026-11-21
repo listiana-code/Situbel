@@ -53,6 +53,7 @@ export const RejectReasonModal: React.FC<RejectReasonModalProps> = ({
       }}
     >
       <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="h-1.5 w-full bg-[#C8102E]" />
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
           <div className="flex items-center gap-2.5">
             <AlertTriangle

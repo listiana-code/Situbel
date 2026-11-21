@@ -16,20 +16,18 @@ export const BasarnasLogo: React.FC<BasarnasLogoProps> = ({ size = 34, className
       aria-hidden="true"
       className={className}
     >
-      <rect width="40" height="40" rx="8" fill="#1C1D22" />
+      <rect width="40" height="40" rx="9" fill="#C8102E" />
       <path
-        d="M20 6L31.5 11.2V20.5C31.5 27.2 26.6 32.5 20 34.5C13.4 32.5 8.5 27.2 8.5 20.5V11.2L20 6Z"
-        stroke="#DC2626"
-        strokeWidth="2.2"
-        fill="#282A30"
+        d="M20 6.5L31 11.4V20.4C31 26.8 26.3 31.8 20 33.8C13.7 31.8 9 26.8 9 20.4V11.4L20 6.5Z"
+        fill="#FFFFFF"
       />
       <path
-        d="M20 12.2L25.5 24.8H14.5L20 12.2Z"
-        stroke="#FAFAFA"
-        strokeWidth="1.9"
+        d="M20 12.2L25.4 24.4H14.6L20 12.2Z"
+        stroke="#C8102E"
+        strokeWidth="2"
         strokeLinejoin="round"
       />
-      <circle cx="20" cy="21" r="2.2" fill="#DC2626" />
+      <circle cx="20" cy="20.8" r="2.2" fill="#C8102E" />
     </svg>
   );
 };

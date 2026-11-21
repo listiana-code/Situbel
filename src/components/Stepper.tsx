@@ -202,31 +202,58 @@ export const Stepper: React.FC<StepperProps> = ({
       ? 'Selesai / Aktif'
       : activeSteps[activeIdx]?.nama_step ?? 'Dalam Proses';
 
+  const completedSteps = Math.min(totalSteps, Math.max(0, activeIdx));
+  const progressPct = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex flex-wrap items-baseline gap-2">
-          <h3 className="text-base font-bold text-slate-900">Alur Progres Pengajuan</h3>
-          <span className="text-xs text-slate-500 tabular-nums">
-            (Total {totalSteps} Tahapan)
-          </span>
-        </div>
-        <p className="text-xs text-slate-600 mt-1">
-          Tahap saat ini:{' '}
+    <div className="kpi-card overflow-hidden">
+      {/* Top Progress Accent Bar */}
+      <div className="h-1.5 w-full bg-red-50">
+        <div
+          className={`h-full transition-all duration-300 ${
+            rejected ? 'bg-red-600' : activeIdx >= totalSteps ? 'bg-emerald-600' : 'bg-[#C8102E]'
+          }`}
+          style={{ width: `${Math.max(6, progressPct)}%` }}
+        />
+      </div>
+
+      <div className="p-5 sm:p-6">
+        {/* Header */}
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+          <div>
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h3 className="text-base font-extrabold text-slate-900">Alur Progres Pengajuan</h3>
+              <span className="text-xs font-mono text-slate-500 tabular-nums">
+                ({completedSteps}/{totalSteps} Tahapan)
+              </span>
+            </div>
+            <p className="text-xs text-slate-600 mt-1">
+              Tahap saat ini:{' '}
+              <span
+                className={`font-bold ${
+                  rejected
+                    ? 'text-red-700'
+                    : activeIdx >= totalSteps
+                    ? 'text-emerald-700'
+                    : 'text-[#A50D26]'
+                }`}
+              >
+                {currentStepName}
+              </span>
+            </p>
+          </div>
           <span
-            className={`font-semibold ${
+            className={`px-2.5 py-1 rounded-md text-xs font-mono font-bold tabular-nums border ${
               rejected
-                ? 'text-red-700'
+                ? 'bg-red-50 text-red-700 border-red-200'
                 : activeIdx >= totalSteps
-                ? 'text-emerald-700'
-                : 'text-indigo-700'
+                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                : 'bg-red-50 text-[#A50D26] border-red-200'
             }`}
           >
-            {currentStepName}
+            {progressPct}% Selesai
           </span>
-        </p>
-      </div>
+        </div>
 
       {/* Horizontal Stepper Track */}
       <div className="overflow-x-auto pb-2 -mx-1 px-1">
@@ -285,8 +312,8 @@ export const Stepper: React.FC<StepperProps> = ({
                       : isDone
                       ? 'bg-emerald-600 text-white'
                       : isCurrent
-                      ? 'bg-indigo-600 text-white ring-4 ring-indigo-100'
-                      : 'bg-white border-2 border-slate-200 text-slate-400'
+                      ? 'bg-[#C8102E] text-white ring-4 ring-red-100'
+                      : 'bg-white border-2 border-slate-300 text-slate-600'
                   }`}
                 >
                   {isRejectedStep ? (
@@ -306,10 +333,10 @@ export const Stepper: React.FC<StepperProps> = ({
                     isRejectedStep
                       ? 'font-bold text-red-800'
                       : isCurrent
-                      ? 'font-bold text-indigo-900'
+                      ? 'font-bold text-[#A50D26]'
                       : isDone
                       ? 'font-semibold text-slate-900'
-                      : 'font-medium text-slate-400'
+                      : 'font-medium text-slate-500'
                   }`}
                 >
                   {step.nama_step}
@@ -319,10 +346,10 @@ export const Stepper: React.FC<StepperProps> = ({
                 <p
                   className={`mt-1.5 text-[10px] font-semibold tracking-wide ${
                     isCurrent
-                      ? 'text-indigo-600'
+                      ? 'text-[#A50D26]'
                       : isDone
-                      ? 'text-slate-500'
-                      : 'text-slate-400'
+                      ? 'text-slate-600'
+                      : 'text-slate-500'
                   }`}
                 >
                   {getShortRoleLabel(step.role_penanggung_jawab)}
@@ -361,6 +388,7 @@ export const Stepper: React.FC<StepperProps> = ({
             );
           })}
         </ol>
+      </div>
       </div>
     </div>
   );

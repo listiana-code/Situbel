@@ -176,7 +176,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header
       ref={containerRef}
-      className="sticky top-0 z-40 h-16 bg-white border-b border-slate-200 px-4 lg:px-6 flex items-center justify-between gap-4"
+      className="sticky top-0 z-40 h-16 bg-white border-t-[3px] border-t-[#C8102E] border-b border-slate-200 px-4 lg:px-6 flex items-center justify-between gap-4 shadow-[0_1px_2px_rgba(16,24,40,0.04)]"
     >
       {/* Left: Toggle + Contextual Breadcrumb */}
       <div className="flex items-center gap-3 min-w-0">
@@ -184,22 +184,25 @@ export const Header: React.FC<HeaderProps> = ({
           type="button"
           onClick={onToggleSidebar}
           aria-label="Buka atau tutup sidebar navigasi"
-          className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
+          className="p-2 text-slate-600 hover:text-[#C8102E] hover:bg-[#FDF2F4] rounded-lg transition-colors shrink-0"
         >
           <Menu className="w-5 h-5" />
         </button>
-        <div className="min-w-0 hidden sm:block">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
-            <span className="truncate">SITUBEL</span>
-            <span aria-hidden="true">/</span>
-            <span className="font-semibold text-slate-900 truncate">{activeMenuLabel}</span>
-          </div>
+        <div className="min-w-0 hidden sm:flex items-center gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600">
+            SITUBEL
+          </span>
+          <span className="text-slate-500" aria-hidden="true">/</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FDF2F4] border border-[#F5C6CE] text-xs font-bold text-[#A50D26] truncate">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C8102E] shrink-0" aria-hidden="true" />
+            <span className="truncate">{activeMenuLabel}</span>
+          </span>
         </div>
       </div>
 
       {/* Center: Global Search */}
       <div className="relative flex-1 max-w-md">
-        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         <input
           type="search"
           value={searchQuery}
@@ -210,12 +213,12 @@ export const Header: React.FC<HeaderProps> = ({
           }}
           placeholder="Cari no. registrasi, no. SK, NIP, atau nama..."
           aria-label="Pencarian global pengajuan SITUBEL"
-          className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-orange-600 focus:outline-none transition-colors"
+          className="w-full pl-9 pr-3.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 placeholder:text-slate-500 focus:bg-white focus:border-[#C8102E] focus:outline-none transition-colors"
         />
         {searchOpen && searchQuery.trim().length >= 2 && (
           <div className="absolute left-0 right-0 mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
             {searchResults.length === 0 ? (
-              <p className="p-4 text-xs text-slate-500 text-center">
+              <p className="p-4 text-xs text-slate-600 text-center">
                 Tidak ditemukan pengajuan untuk “{searchQuery}”.
               </p>
             ) : (
@@ -233,20 +236,20 @@ export const Header: React.FC<HeaderProps> = ({
                           onOpenDossier({ type: res.kind, id: res.id });
                         }
                       }}
-                      className="w-full text-left px-4 py-2.5 hover:bg-slate-50 transition-colors"
+                      className="w-full text-left px-4 py-2.5 hover:bg-[#FDF2F4] transition-colors"
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-mono font-semibold text-slate-900">
+                        <span className="text-xs font-mono font-bold text-[#A50D26]">
                           {res.noReg}
                         </span>
-                        <span className="text-[11px] text-slate-500 truncate">
+                        <span className="text-[11px] font-medium text-slate-600 truncate">
                           {getStatusLabel(res.status)}
                         </span>
                       </div>
-                      <p className="text-xs font-medium text-slate-800 mt-0.5 truncate">
-                        {res.nama} · <span className="font-mono text-slate-500">{res.nip}</span>
+                      <p className="text-xs font-semibold text-slate-800 mt-0.5 truncate">
+                        {res.nama} · <span className="font-mono text-slate-600">{res.nip}</span>
                       </p>
-                      <p className="text-[11px] text-slate-500 truncate">{res.sub}</p>
+                      <p className="text-[11px] text-slate-600 truncate">{res.sub}</p>
                     </button>
                   </li>
                 ))}
@@ -267,18 +270,18 @@ export const Header: React.FC<HeaderProps> = ({
               setNotifOpen(false);
               setProfileOpen(false);
             }}
-            className="inline-flex items-center gap-1.5 px-2.5 py-2 text-xs font-medium text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-[#FDF2F4] hover:text-[#A50D26] hover:border-[#F5C6CE] border border-slate-200 rounded-lg transition-colors whitespace-nowrap shrink-0"
           >
-            <Users className="w-3.5 h-3.5 text-orange-600" />
+            <Users className="w-3.5 h-3.5 text-[#C8102E]" />
             <span className="hidden md:inline">Ganti Peran</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
           </button>
 
           {roleOpen && (
             <div className="absolute right-0 mt-1.5 w-80 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
-              <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50">
-                <p className="text-xs font-bold text-slate-900">Ganti Peran Demo (1-Klik)</p>
-                <p className="text-[11px] text-slate-500">
+              <div className="px-4 py-3 border-b border-[#A50D26] bg-[#C8102E] text-white">
+                <p className="text-xs font-bold">Ganti Peran Demo (1-Klik)</p>
+                <p className="text-[11px] text-white/90 mt-0.5">
                   Uji alur persetujuan lintas 8 peran SITUBEL secara langsung
                 </p>
               </div>
@@ -296,7 +299,7 @@ export const Header: React.FC<HeaderProps> = ({
                             setRoleOpen(false);
                           }}
                           className={`w-full text-left px-4 py-2.5 transition-colors flex items-center justify-between gap-2 ${
-                            isCurrent ? 'bg-orange-50' : 'hover:bg-slate-50'
+                            isCurrent ? 'bg-[#FDF2F4]' : 'hover:bg-slate-50'
                           }`}
                         >
                           <div className="min-w-0">
@@ -308,7 +311,7 @@ export const Header: React.FC<HeaderProps> = ({
                             </p>
                           </div>
                           {isCurrent && (
-                            <span className="text-[11px] font-semibold text-orange-700 shrink-0">
+                            <span className="px-2 py-0.5 rounded bg-[#C8102E] text-[10px] font-bold text-white shrink-0">
                               Aktif
                             </span>
                           )}
@@ -331,11 +334,11 @@ export const Header: React.FC<HeaderProps> = ({
               setProfileOpen(false);
             }}
             aria-label="Notifikasi"
-            className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+            className="relative p-2 text-slate-600 hover:text-[#C8102E] hover:bg-[#FDF2F4] rounded-lg transition-colors"
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-orange-600 text-white text-[10px] font-mono font-bold flex items-center justify-center tabular-nums">
+              <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#C8102E] text-white text-[10px] font-mono font-bold flex items-center justify-center tabular-nums">
                 {unreadCount}
               </span>
             )}
@@ -343,7 +346,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {notifOpen && (
             <div className="absolute right-0 mt-1.5 w-80 sm:w-96 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
-              <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+              <div className="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
                 <p className="text-xs font-bold text-slate-900">
                   Notifikasi ({unreadCount} belum dibaca)
                 </p>
@@ -351,7 +354,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     type="button"
                     onClick={() => Storage.markAllNotificationsRead(user)}
-                    className="inline-flex items-center gap-1 text-[11px] font-medium text-orange-700 hover:text-orange-800 whitespace-nowrap"
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#C8102E] hover:text-[#A50D26] whitespace-nowrap"
                   >
                     <CheckCheck className="w-3.5 h-3.5" />
                     Tandai semua dibaca
@@ -360,7 +363,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
                 {notifications.length === 0 ? (
-                  <p className="p-6 text-xs text-slate-500 text-center">Belum ada notifikasi.</p>
+                  <p className="p-6 text-xs text-slate-600 text-center">Belum ada notifikasi.</p>
                 ) : (
                   notifications.map((n) => (
                     <button
@@ -383,12 +386,12 @@ export const Header: React.FC<HeaderProps> = ({
                         }
                       }}
                       className={`w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors ${
-                        n.is_read ? 'opacity-70' : 'bg-orange-50/40'
+                        n.is_read ? 'opacity-75' : 'bg-[#FDF2F4]/60'
                       }`}
                     >
                       <p className="text-xs font-semibold text-slate-900">{n.judul}</p>
                       <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{n.pesan}</p>
-                      <p className="text-[10px] font-mono text-slate-400 mt-1 tabular-nums">
+                      <p className="text-[10px] font-mono text-slate-500 mt-1 tabular-nums">
                         {formatDateTimeIndo(n.created_at)}
                       </p>
                     </button>
@@ -400,7 +403,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Profile Dropdown */}
-        <div className="relative">
+        <div className="relative pl-1 border-l border-slate-200">
           <button
             type="button"
             onClick={() => {
@@ -415,36 +418,36 @@ export const Header: React.FC<HeaderProps> = ({
                 src={user.avatar_url}
                 alt={user.nama_lengkap}
                 referrerPolicy="no-referrer"
-                className="w-8 h-8 rounded-full object-cover border border-slate-200"
+                className="w-8 h-8 rounded-full object-cover border-2 border-[#C8102E]/30"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#C8102E] text-white text-xs font-bold flex items-center justify-center shrink-0">
                 {initials}
               </div>
             )}
-            <div className="hidden xl:block text-left max-w-[150px]">
-              <p className="text-xs font-semibold text-slate-900 truncate">{user.nama_lengkap}</p>
-              <p className="text-[11px] font-mono text-slate-500 truncate">{user.nip}</p>
+            <div className="hidden xl:block text-left max-w-[155px]">
+              <p className="text-xs font-bold text-slate-900 truncate">{user.nama_lengkap}</p>
+              <p className="text-[11px] font-mono text-slate-600 truncate">{user.nip}</p>
             </div>
           </button>
 
           {profileOpen && (
-            <div className="absolute right-0 mt-1.5 w-60 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
-              <div className="px-4 py-3 border-b border-slate-100">
+            <div className="absolute right-0 mt-1.5 w-64 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
+              <div className="px-4 py-3 border-b border-slate-100 bg-slate-50">
                 <p className="text-xs font-bold text-slate-900 truncate">{user.nama_lengkap}</p>
-                <p className="text-[11px] font-mono text-slate-500 mt-0.5">{user.nip}</p>
-                <p className="text-[11px] text-slate-600 mt-1 truncate">
+                <p className="text-[11px] font-mono text-slate-600 mt-0.5">{user.nip}</p>
+                <p className="text-[11px] font-semibold text-[#C8102E] mt-1 truncate">
                   {getRoleDisplayLabel(user.role)}
                 </p>
               </div>
-              <div className="p-1.5">
+              <div className="p-1.5 space-y-0.5">
                 <button
                   type="button"
                   onClick={() => {
                     setProfileOpen(false);
                     onOpenProfile();
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100 rounded-lg"
                 >
                   <UserCircle2 className="w-4 h-4 text-slate-500" />
                   Pengaturan Profil
@@ -455,7 +458,7 @@ export const Header: React.FC<HeaderProps> = ({
                     setProfileOpen(false);
                     onLogout();
                   }}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-red-700 hover:bg-red-50 rounded-lg"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#C8102E] hover:bg-[#FDF2F4] rounded-lg"
                 >
                   <LogOut className="w-4 h-4" />
                   Keluar dari SITUBEL

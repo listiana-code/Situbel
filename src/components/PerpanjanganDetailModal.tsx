@@ -181,11 +181,14 @@ export const PerpanjanganDetailModal: React.FC<PerpanjanganDetailModalProps> = (
         }}
       >
         <div className="bg-white border border-slate-200 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+          <div className="h-1 w-full bg-[#C8102E] shrink-0" />
+          <div className="bg-white flex items-center justify-between px-6 py-4 border-b border-slate-200">
             <div className="flex items-center gap-3 min-w-0">
-              <CalendarClock className="w-5 h-5 text-orange-600 shrink-0" />
+              <span className="w-9 h-9 rounded-lg bg-[#FDF2F4] text-[#C8102E] border border-[#F5C6CE] flex items-center justify-center shrink-0">
+                <CalendarClock className="w-5 h-5" />
+              </span>
               <div className="min-w-0">
-                <h3 className="text-base font-bold text-slate-900 truncate">
+                <h3 className="text-base font-extrabold text-slate-900 truncate">
                   Perpanjangan Masa Belajar · {item.no_registrasi}
                 </h3>
                 <p className={`text-xs font-semibold mt-0.5 ${getStatusTextClass(item.status)}`}>
@@ -197,13 +200,13 @@ export const PerpanjanganDetailModal: React.FC<PerpanjanganDetailModalProps> = (
               type="button"
               onClick={onClose}
               aria-label="Tutup detail perpanjangan"
-              className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
+              className="p-1.5 text-slate-500 hover:text-[#C8102E] hover:bg-[#FDF2F4] rounded-lg transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 overscroll-contain bg-slate-50/50">
+          <div className="flex-1 overflow-y-auto p-6 space-y-6 overscroll-contain bg-[#ECEEF1]">
             <Stepper
               jenis="perpanjangan"
               currentStatus={item.status}
