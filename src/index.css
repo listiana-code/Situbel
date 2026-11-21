@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Public Sans", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Executive Crimson KPI Theme — Primary Brand Spectrum (replaces orange) */
+  --color-orange-50: #fef2f2;
+  --color-orange-100: #fee2e2;
+  --color-orange-200: #fecaca;
+  --color-orange-300: #fca5a5;
+  --color-orange-400: #f87171;
+  --color-orange-500: #ef4444;
+  --color-orange-600: #dc2626;
+  --color-orange-700: #b91c1c;
+  --color-orange-800: #991b1b;
+  --color-orange-900: #7f1d1d;
+  --color-orange-950: #450a0a;
+
+  /* Executive Crimson Secondary Accent (aligns indigo tokens to deep ruby crimson) */
+  --color-indigo-50: #fff1f2;
+  --color-indigo-100: #ffe4e6;
+  --color-indigo-200: #fecdd3;
+  --color-indigo-300: #fda4af;
+  --color-indigo-400: #fb7185;
+  --color-indigo-500: #e11d48;
+  --color-indigo-600: #c81e1e;
+  --color-indigo-700: #991b1b;
+  --color-indigo-800: #881337;
+  --color-indigo-900: #7f1d1d;
+  --color-indigo-950: #4c0519;
+
+  /* Harmonized Coral/Rose Accent (aligns purple tokens to soft crimson rose) */
+  --color-purple-50: #fff1f2;
+  --color-purple-100: #ffe4e6;
+  --color-purple-200: #fecdd3;
+  --color-purple-300: #fda4af;
+  --color-purple-400: #fb7185;
+  --color-purple-500: #f43f5e;
+  --color-purple-600: #e11d48;
+  --color-purple-700: #be123c;
+  --color-purple-800: #9f1239;
+  --color-purple-900: #881337;
+
+  /* Crisp Architectural Neutral Gray & Charcoal (replaces cool blue-slate) */
+  --color-slate-50: #f4f4f6;
+  --color-slate-100: #ebecef;
+  --color-slate-200: #e2e3e7;
+  --color-slate-300: #d0d2d8;
+  --color-slate-400: #9ca0ab;
+  --color-slate-500: #6e727d;
+  --color-slate-600: #52555f;
+  --color-slate-700: #3a3d45;
+  --color-slate-800: #282a30;
+  --color-slate-900: #1c1d22;
+  --color-slate-950: #121317;
+}
+
+@layer base {
+  html,
+  body {
+    overflow-x: clip;
+    max-width: 100vw;
+    font-family: var(--font-sans);
+    background-color: #f4f4f6;
+    color: #1c1d22;
+    color-scheme: light;
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+  }
+
+  dialog::backdrop {
+    background-color: rgba(24, 24, 27, 0.58);
+    backdrop-filter: blur(2px);
+  }
+}
+
+/* Executive Crimson KPI Table Header Signature (inspired by Basic Table in reference) */
+table thead tr {
+  background-color: #fef2f2;
+  border-bottom-color: #fecaca;
+}
+
+table thead th {
+  color: #991b1b;
+  letter-spacing: 0.01em;
+}
+
+/* Subtle crisp elevation on white dashboard cards against neutral light-gray canvas */
+.bg-white.border.border-slate-200.rounded-xl {
+  box-shadow: 0 1px 3px rgba(24, 24, 27, 0.05);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Charcoal + subtle crimson executive cover gradient (inspired by reference KPI cover) */
+.theme-crimson-hero {
+  background: radial-gradient(
+      circle at 82% 14%,
+      rgba(220, 38, 38, 0.28) 0%,
+      rgba(153, 27, 27, 0.08) 42%,
+      transparent 72%
+    ),
+    linear-gradient(155deg, #27272d 0%, #1c1d22 58%, #16161a 100%);
+}
+
+/* Sleek dark translucent scrollbar for the sidebar — eliminates jarring white OS scrollbars */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.16);
+  border-radius: 9999px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

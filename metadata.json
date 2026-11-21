@@ -1,0 +1,6 @@
+{
+  "name": "SITUBEL — Sistem Informasi Tugas Belajar Terpadu",
+  "description": "Sistem Informasi Tugas Belajar Terpadu (SITUBEL) di lingkungan Badan Nasional Pencarian dan Pertolongan (BASARNAS) untuk layanan rekomendasi, beasiswa, biaya mandiri, perpanjangan masa belajar, monev, dan pencantuman gelar BKN/SIASN.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
