@@ -126,11 +126,13 @@ export const RiwayatDetailPanel: React.FC<RiwayatDetailPanelProps> = ({
         {/* LEFT COLUMN (8/12): Study Metadata, Latest Progress Note, Quick Previews, Selection & Full History */}
         <div className="lg:col-span-8 space-y-5">
           {/* Primary Study Card */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 sm:p-6 space-y-5">
+          <div className="kpi-card overflow-hidden">
+            <div className="h-1 w-full bg-[#C8102E]" />
+            <div className="p-5 sm:p-6 space-y-5">
             {/* Title Row */}
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex items-start gap-3.5 min-w-0">
-                <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0">
+                <div className="w-11 h-11 rounded-xl bg-[#C8102E] text-white flex items-center justify-center shrink-0 shadow-xs">
                   {pg ? (
                     <Award className="w-5 h-5" />
                   ) : rek ? (
@@ -140,57 +142,57 @@ export const RiwayatDetailPanel: React.FC<RiwayatDetailPanelProps> = ({
                   )}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 leading-snug">
                     {titleLine}
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 mt-0.5">{subtitleLine}</p>
                 </div>
               </div>
               <div className="text-right shrink-0">
-                <p className="text-xs font-bold text-indigo-700 tracking-wide uppercase">
+                <span className="inline-block px-2.5 py-0.5 rounded bg-red-50 border border-red-200/80 text-[10px] font-extrabold text-[#A50D26] tracking-wider uppercase">
                   {jenisTag}
-                </p>
-                <p className={`text-[11px] font-semibold mt-0.5 ${getStatusTextClass(record.status)}`}>
+                </span>
+                <p className={`text-[11px] font-bold mt-1 ${getStatusTextClass(record.status)}`}>
                   {getStatusLabel(record.status)}
                 </p>
               </div>
             </div>
 
-            {/* 3x2 Metadata Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-5 gap-y-4 pt-4 border-t border-slate-100 text-xs">
-              <div>
-                <p className="text-slate-500">ID Registrasi</p>
-                <p className="font-mono font-semibold text-slate-900 mt-1 tabular-nums">
+            {/* 3x2 Metadata KPI Tiles */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-slate-100 text-xs">
+              <div className="rounded-lg bg-[#FAFAFB] border border-slate-200/80 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">ID Registrasi</p>
+                <p className="font-mono font-bold text-slate-900 mt-1 tabular-nums">
                   {record.no_registrasi}
                 </p>
               </div>
-              <div>
-                <p className="text-slate-500">
+              <div className="rounded-lg bg-[#FAFAFB] border border-slate-200/80 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
                   {pg ? 'Verifikasi Pangkat' : 'Akreditasi Prodi'}
                 </p>
-                <p className="font-semibold text-slate-900 mt-1">{akreditasiText}</p>
+                <p className="font-bold text-slate-900 mt-1">{akreditasiText}</p>
               </div>
-              <div>
-                <p className="text-slate-500">
+              <div className="rounded-lg bg-[#FAFAFB] border border-slate-200/80 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
                   {pg ? 'Periode SIASN' : 'Sumber Pembiayaan'}
                 </p>
-                <p className="font-semibold text-slate-900 mt-1">{sumberDanaText}</p>
+                <p className="font-bold text-slate-900 mt-1">{sumberDanaText}</p>
               </div>
-              <div>
-                <p className="text-slate-500">
+              <div className="rounded-lg bg-[#FAFAFB] border border-slate-200/80 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
                   {pg ? 'Tanggal Kelulusan' : 'Periode Studi'}
                 </p>
-                <p className="font-semibold text-slate-900 mt-1 tabular-nums">
+                <p className="font-bold text-slate-900 mt-1 tabular-nums">
                   {periodeStudiText}
                 </p>
               </div>
-              <div>
-                <p className="text-slate-500">Unit Kerja</p>
-                <p className="font-semibold text-slate-900 mt-1">{record.unit_kerja_nama}</p>
+              <div className="rounded-lg bg-[#FAFAFB] border border-slate-200/80 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">Unit Kerja</p>
+                <p className="font-bold text-slate-900 mt-1">{record.unit_kerja_nama}</p>
               </div>
-              <div>
-                <p className="text-slate-500">Pangkat / Golongan</p>
-                <p className="font-semibold text-slate-900 mt-1">{record.pangkat_golongan}</p>
+              <div className="rounded-lg bg-[#FAFAFB] border border-slate-200/80 p-3">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-600">Pangkat / Golongan</p>
+                <p className="font-bold text-slate-900 mt-1">{record.pangkat_golongan}</p>
               </div>
             </div>
 
@@ -330,6 +332,7 @@ export const RiwayatDetailPanel: React.FC<RiwayatDetailPanelProps> = ({
                 </span>
               )}
             </div>
+            </div>
           </div>
 
           {/* Hasil Seleksi & Uji Kompetensi (if interview result exists) */}
@@ -453,8 +456,8 @@ export const RiwayatDetailPanel: React.FC<RiwayatDetailPanelProps> = ({
                   </span>
                 </div>
 
-                <p className="text-[11px] font-mono text-slate-500 truncate">{doc.nama_file}</p>
-                <p className="text-[11px] font-mono text-slate-400 tabular-nums">
+                <p className="text-[11px] font-mono text-slate-600 truncate">{doc.nama_file}</p>
+                <p className="text-[11px] font-mono text-slate-500 tabular-nums">
                   {doc.ukuran_mb} MB · {formatDateIndo(doc.uploaded_at, true)}, {formatTimeIndo(doc.uploaded_at)}
                 </p>
 

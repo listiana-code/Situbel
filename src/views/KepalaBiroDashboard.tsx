@@ -1,5 +1,17 @@
 import React, { useMemo } from 'react';
-import { Eye, CheckCircle2, Clock } from 'lucide-react';
+import {
+  Eye,
+  CheckCircle2,
+  Clock,
+  FileText,
+  GraduationCap,
+  CalendarClock,
+  BookOpen,
+} from 'lucide-react';
+import {
+  KpiGraduatedStrip,
+  PageBannerHeader,
+} from '../components/KpiVisuals';
 import { formatDateIndo } from '../lib/dateUtils';
 import { getStatusLabel, getStatusTextClass } from '../lib/statusUtils';
 import { Storage } from '../lib/storage';
@@ -27,6 +39,7 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
   const pendingRek = rekomendasis.filter((r) => r.status === 'menunggu_konfirmasi_kabi');
   const pendingTb = tbs.filter((t) => t.status === 'menunggu_konfirmasi_kabi');
   const pendingPpj = perpanjangans.filter((p) => p.status === 'menunggu_acc_kabiro');
+  const activeStudents = tbs.filter((t) => t.status === 'sedang_belajar').length;
 
   const historyItems = useMemo(() => {
     const list: Array<{
@@ -71,70 +84,89 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
     return list;
   }, [rekomendasis, tbs]);
 
+  const totalPendingAll = pendingRek.length + pendingTb.length + pendingPpj.length;
+  const totalProcessed = historyItems.length;
+  const slaRate =
+    totalProcessed + totalPendingAll > 0
+      ? Math.round((totalProcessed / (totalProcessed + totalPendingAll)) * 100)
+      : 100;
+
+  const pageTitle =
+    activeMenu === 'konfirmasi_rekomendasi'
+      ? 'Konfirmasi Surat Rekomendasi (Read & Confirm)'
+      : activeMenu === 'konfirmasi_tugas_belajar'
+      ? 'Konfirmasi Tugas Belajar (Buka Penyusunan SK)'
+      : activeMenu === 'konfirmasi_perpanjangan'
+      ? 'Konfirmasi Perpanjangan Masa Belajar'
+      : activeMenu === 'monitoring_monev'
+      ? 'Monitoring Monev & IPK per Unit / Daerah'
+      : activeMenu === 'riwayat_konfirmasi'
+      ? 'Riwayat Konfirmasi Kepala Biro'
+      : 'Dashboard Eksekutif Kepala Biro Kepegawaian';
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">
-          {activeMenu === 'konfirmasi_rekomendasi'
-            ? 'Konfirmasi Surat Rekomendasi (Read & Confirm)'
-            : activeMenu === 'konfirmasi_tugas_belajar'
-            ? 'Konfirmasi Tugas Belajar (Buka Penyusunan SK)'
-            : activeMenu === 'konfirmasi_perpanjangan'
-            ? 'Konfirmasi Perpanjangan Masa Belajar'
-            : activeMenu === 'monitoring_monev'
-            ? 'Monitoring Monev & IPK per Unit / Daerah'
-            : activeMenu === 'riwayat_konfirmasi'
-            ? 'Riwayat Konfirmasi Kepala Biro'
-            : 'Dashboard Eksekutif Kepala Biro Kepegawaian'}
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Lakukan Read & Confirm, pengembalian perbaikan ke Admin Pusat, atau persetujuan pembukaan tahap SK.
-        </p>
-      </div>
+      <PageBannerHeader
+        eyebrow="OTORITAS EKSEKUTIF · BIRO KEPEGAWAIAN & ORGANISASI"
+        title={pageTitle}
+        description="Lakukan Read & Confirm, pengembalian perbaikan ke Admin Pusat, atau persetujuan pembukaan tahap penerbitan SK Tugas Belajar."
+        rightSlot={
+          <div className="bg-red-50 border border-red-200/80 rounded-xl px-4 py-2.5 text-right">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#A50D26]">
+              Total Antrean Konfirmasi
+            </p>
+            <p className="text-lg font-extrabold font-mono text-[#7F0C16] tabular-nums leading-tight">
+              {totalPendingAll} berkas
+            </p>
+          </div>
+        }
+      />
 
-      {/* KPI Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Menunggu Read & Confirm Rek</p>
-          <p className="text-2xl font-bold font-mono text-orange-700 mt-1 tabular-nums">
-            {pendingRek.length}
-          </p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Menunggu Konfirmasi Tubel</p>
-          <p className="text-2xl font-bold font-mono text-orange-700 mt-1 tabular-nums">
-            {pendingTb.length}
-          </p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Perpanjangan Menunggu ACC</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">
-            {pendingPpj.length}
-          </p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Pegawai Sedang Belajar</p>
-          <p className="text-2xl font-bold font-mono text-emerald-700 mt-1 tabular-nums">
-            {tbs.filter((t) => t.status === 'sedang_belajar').length}
-          </p>
-        </div>
-      </div>
+      {/* Signature 4-Tier Graduated Crimson KPI Strip */}
+      <KpiGraduatedStrip
+        items={[
+          {
+            label: 'Read & Confirm Rek',
+            value: pendingRek.length,
+            sublabel: `${rekomendasis.length} total rekomendasi`,
+            icon: FileText,
+          },
+          {
+            label: 'Konfirmasi Tubel',
+            value: pendingTb.length,
+            sublabel: 'Buka tahap penyusunan SK',
+            icon: GraduationCap,
+          },
+          {
+            label: 'Perpanjangan ACC',
+            value: pendingPpj.length,
+            sublabel: `${perpanjangans.length} total usulan`,
+            icon: CalendarClock,
+          },
+          {
+            label: 'Pegawai Sedang Belajar',
+            value: activeStudents,
+            sublabel: `${monevs.length} laporan monev KHS`,
+            icon: BookOpen,
+          },
+        ]}
+      />
 
       {/* Contextual Table Views */}
       {(activeMenu === 'dashboard' || activeMenu === 'konfirmasi_rekomendasi') && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
             <h2 className="text-base font-bold text-slate-900">
               Antrean Konfirmasi Surat Rekomendasi
             </h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">
+            <span className="px-2.5 py-1 rounded-md bg-red-50 border border-red-200/80 text-xs font-mono font-bold text-[#A50D26] tabular-nums">
               {pendingRek.length} berkas
             </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">No. Registrasi</th>
                   <th className="py-3 px-4">Pegawai & Unit</th>
                   <th className="py-3 px-4">Universitas & Prodi</th>
@@ -152,8 +184,8 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                   </tr>
                 ) : (
                   pendingRek.map((r) => (
-                    <tr key={r.id} className="hover:bg-slate-50/70">
-                      <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                    <tr key={r.id}>
+                      <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                         {r.no_registrasi}
                       </td>
                       <td className="py-3.5 px-4">
@@ -175,7 +207,7 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                         <button
                           type="button"
                           onClick={() => onOpenDossier({ type: 'rekomendasi', id: r.id })}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg whitespace-nowrap"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg whitespace-nowrap shadow-xs transition-colors"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           Read & Confirm
@@ -191,19 +223,19 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
       )}
 
       {(activeMenu === 'dashboard' || activeMenu === 'konfirmasi_tugas_belajar') && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
             <h2 className="text-base font-bold text-slate-900">
               Antrean Konfirmasi Tugas Belajar (Buka Tahap SK)
             </h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">
+            <span className="px-2.5 py-1 rounded-md bg-red-50 border border-red-200/80 text-xs font-mono font-bold text-[#A50D26] tabular-nums">
               {pendingTb.length} berkas
             </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">No. Registrasi</th>
                   <th className="py-3 px-4">Pegawai & Unit</th>
                   <th className="py-3 px-4">Jalur & Kampus</th>
@@ -220,8 +252,8 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                   </tr>
                 ) : (
                   pendingTb.map((t) => (
-                    <tr key={t.id} className="hover:bg-slate-50/70">
-                      <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                    <tr key={t.id}>
+                      <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                         {t.no_registrasi}
                       </td>
                       <td className="py-3.5 px-4">
@@ -245,7 +277,7 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                         <button
                           type="button"
                           onClick={() => onOpenDossier({ type: 'tugas_belajar', id: t.id })}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-orange-600 hover:bg-orange-700 rounded-lg whitespace-nowrap"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-[#C8102E] hover:bg-[#A50D26] rounded-lg whitespace-nowrap shadow-xs transition-colors"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           Periksa & Konfirmasi
@@ -261,17 +293,17 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
       )}
 
       {(activeMenu === 'dashboard' || activeMenu === 'konfirmasi_perpanjangan') && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
             <h2 className="text-base font-bold text-slate-900">Usulan Perpanjangan Masa Belajar</h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">
+            <span className="px-2.5 py-1 rounded-md bg-red-50 border border-red-200/80 text-xs font-mono font-bold text-[#A50D26] tabular-nums">
               {perpanjangans.length} total
             </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">No. Registrasi</th>
                   <th className="py-3 px-4">Pegawai & Unit</th>
                   <th className="py-3 px-4">Tambahan & TMT Baru</th>
@@ -281,8 +313,8 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
                 {perpanjangans.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/70">
-                    <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                  <tr key={p.id}>
+                    <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                       {p.no_registrasi}
                     </td>
                     <td className="py-3.5 px-4">
@@ -301,10 +333,14 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                       <button
                         type="button"
                         onClick={() => onOpenPerpanjangan(p)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg"
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg transition-colors ${
+                          p.status === 'menunggu_acc_kabiro'
+                            ? 'bg-[#C8102E] hover:bg-[#A50D26] text-white'
+                            : 'text-slate-700 bg-white border border-slate-200 hover:border-[#C8102E] hover:text-[#A50D26]'
+                        }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
-                        Detail
+                        {p.status === 'menunggu_acc_kabiro' ? 'Tinjau & ACC' : 'Detail'}
                       </button>
                     </td>
                   </tr>
@@ -316,16 +352,19 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
       )}
 
       {activeMenu === 'monitoring_monev' && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200">
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-900">
               Monitoring Monev Semester & IPK Pegawai Tugas Belajar
             </h2>
+            <span className="px-2.5 py-1 rounded-md bg-red-50 text-xs font-mono font-bold text-[#A50D26]">
+              {monevs.length} laporan
+            </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">Pegawai & Unit</th>
                   <th className="py-3 px-4">Kampus & Prodi</th>
                   <th className="py-3 px-4">Semester</th>
@@ -335,7 +374,7 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
                 {monevs.map((m) => (
-                  <tr key={m.id} className="hover:bg-slate-50/70">
+                  <tr key={m.id}>
                     <td className="py-3.5 px-5">
                       <p className="font-semibold text-slate-900">{m.user_nama}</p>
                       <p className="text-[11px] text-slate-500">{m.unit_kerja_nama}</p>
@@ -347,17 +386,17 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                     <td className="py-3.5 px-4 tabular-nums">
                       Smt {m.semester} · {m.tahun_akademik}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono font-semibold text-slate-900 tabular-nums">
+                    <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-900 tabular-nums">
                       {m.ipk_semester.toFixed(2)} / {m.ipk_kumulatif.toFixed(2)}
                     </td>
                     <td className="py-3.5 px-5">
                       <span
-                        className={`font-semibold ${
+                        className={`font-semibold capitalize ${
                           m.status_evaluasi === 'diterima'
                             ? 'text-emerald-700'
                             : m.status_evaluasi === 'perlu_perbaikan'
                             ? 'text-amber-700'
-                            : 'text-blue-700'
+                            : 'text-[#A50D26]'
                         }`}
                       >
                         {m.status_evaluasi.replace('_', ' ')}
@@ -372,14 +411,17 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
       )}
 
       {activeMenu === 'riwayat_konfirmasi' && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200">
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-900">Riwayat Konfirmasi Kepala Biro</h2>
+            <span className="px-2.5 py-1 rounded-md bg-red-50 text-xs font-mono font-bold text-[#A50D26]">
+              {historyItems.length} riwayat
+            </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">No. Registrasi</th>
                   <th className="py-3 px-4">Pegawai & Unit</th>
                   <th className="py-3 px-4">Status Terkini</th>
@@ -397,8 +439,8 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                   </tr>
                 ) : (
                   historyItems.map((h) => (
-                    <tr key={`${h.type}-${h.id}`} className="hover:bg-slate-50/70">
-                      <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                    <tr key={`${h.type}-${h.id}`}>
+                      <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                         {h.noReg}
                       </td>
                       <td className="py-3.5 px-4">
@@ -417,7 +459,7 @@ export const KepalaBiroDashboard: React.FC<KepalaBiroDashboardProps> = ({
                         <button
                           type="button"
                           onClick={() => onOpenDossier({ type: h.type, id: h.id })}
-                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg"
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:border-[#C8102E] hover:text-[#A50D26] rounded-lg"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           Buka

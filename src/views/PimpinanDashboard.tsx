@@ -1,5 +1,14 @@
 import React, { useMemo } from 'react';
-import { Eye, CheckCircle2, Users } from 'lucide-react';
+import {
+  Eye,
+  CheckCircle2,
+  Users,
+  FileText,
+  GraduationCap,
+  CalendarClock,
+  BookOpen,
+} from 'lucide-react';
+import { KpiGraduatedStrip, PageBannerHeader } from '../components/KpiVisuals';
 import { formatDateIndo } from '../lib/dateUtils';
 import { getStatusLabel, getStatusTextClass } from '../lib/statusUtils';
 import { Storage } from '../lib/storage';
@@ -26,7 +35,6 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
   const allMonev = useMemo(() => Storage.getMonev(), [dataVersion]);
   const allUsers = useMemo(() => Storage.getUsers(), [dataVersion]);
 
-  // Show unit items (and also allow reviewing any pending pimpinan item so demo testers can test PPJ/2026/001 smoothly)
   const unitRek = allRek.filter(
     (r) => r.unit_kerja_id === user.unit_kerja_id || r.status === 'menunggu_acc_pimpinan'
   );
@@ -44,70 +52,93 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
   const pendingRekCount = unitRek.filter((r) => r.status === 'menunggu_acc_pimpinan').length;
   const pendingTbCount = unitTb.filter((t) => t.status === 'menunggu_acc_pimpinan').length;
   const pendingPpjCount = unitPpj.filter((p) => p.status === 'menunggu_acc_pimpinan').length;
+  const activeStudyCount = unitTb.filter((t) => t.status === 'sedang_belajar').length;
+
+  const totalPending = pendingRekCount + pendingTbCount + pendingPpjCount;
+  const totalUnitDocs = unitRek.length + unitTb.length + unitPpj.length;
+  const processedCount = Math.max(0, totalUnitDocs - totalPending);
+  const approvalRate = totalUnitDocs > 0 ? Math.round((processedCount / totalUnitDocs) * 100) : 100;
+
+  const pageTitle =
+    activeMenu === 'acc_rekomendasi'
+      ? 'Persetujuan Surat Rekomendasi (ACC)'
+      : activeMenu === 'acc_tugas_belajar'
+      ? 'Persetujuan Tugas Belajar Unit (ACC)'
+      : activeMenu === 'acc_perpanjangan'
+      ? 'Persetujuan Perpanjangan Masa Belajar'
+      : activeMenu === 'monitoring_monev'
+      ? 'Monitoring Monev & KHS Pegawai Unit'
+      : activeMenu === 'monitoring_unit'
+      ? 'Daftar Pegawai Unit Kerja'
+      : 'Dashboard Pimpinan Unit Kerja';
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">
-          {activeMenu === 'acc_rekomendasi'
-            ? 'Persetujuan Surat Rekomendasi (ACC)'
-            : activeMenu === 'acc_tugas_belajar'
-            ? 'Persetujuan Tugas Belajar Unit (ACC)'
-            : activeMenu === 'acc_perpanjangan'
-            ? 'Persetujuan Perpanjangan Masa Belajar'
-            : activeMenu === 'monitoring_monev'
-            ? 'Monitoring Monev & KHS Pegawai Unit'
-            : activeMenu === 'monitoring_unit'
-            ? 'Daftar Pegawai Unit Kerja'
-            : 'Dashboard Pimpinan Unit Kerja'}
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          {user.unit_kerja_nama} · Persetujuan usulan tugas belajar, perpanjangan, dan pantauan studi staf.
-        </p>
-      </div>
+      <PageBannerHeader
+        eyebrow={`PIMPINAN UNIT · ${user.unit_kerja_nama}`}
+        title={pageTitle}
+        description="Persetujuan usulan surat rekomendasi, tugas belajar, perpanjangan masa studi, serta pantauan progres studi staf unit."
+        rightSlot={
+          <div className="flex items-center gap-2.5 bg-red-50 border border-red-200/80 rounded-xl px-4 py-2.5">
+            <div className="text-right">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#A50D26]">
+                Antrean ACC Unit
+              </p>
+              <p className="text-lg font-extrabold font-mono text-[#7F0C16] tabular-nums leading-tight">
+                {totalPending} berkas
+              </p>
+            </div>
+          </div>
+        }
+      />
 
-      {/* KPI Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">ACC Rekomendasi</p>
-          <p className="text-2xl font-bold font-mono text-orange-700 mt-1 tabular-nums">
-            {pendingRekCount}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Menunggu persetujuan</p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">ACC Tugas Belajar</p>
-          <p className="text-2xl font-bold font-mono text-orange-700 mt-1 tabular-nums">
-            {pendingTbCount}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Menunggu persetujuan</p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">ACC Perpanjangan</p>
-          <p className="text-2xl font-bold font-mono text-slate-900 mt-1 tabular-nums">
-            {pendingPpjCount}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Menunggu persetujuan</p>
-        </div>
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <p className="text-xs text-slate-500">Staf Sedang Belajar</p>
-          <p className="text-2xl font-bold font-mono text-emerald-700 mt-1 tabular-nums">
-            {unitTb.filter((t) => t.status === 'sedang_belajar').length}
-          </p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Aktif kuliah di unit</p>
-        </div>
-      </div>
+      {/* Signature 4-Tier Graduated Crimson KPI Strip */}
+      <KpiGraduatedStrip
+        items={[
+          {
+            label: 'ACC Rekomendasi',
+            value: pendingRekCount,
+            sublabel: `${unitRek.length} total pengajuan unit`,
+            icon: FileText,
+          },
+          {
+            label: 'ACC Tugas Belajar',
+            value: pendingTbCount,
+            sublabel: `${unitTb.length} usulan beasiswa & mandiri`,
+            icon: GraduationCap,
+          },
+          {
+            label: 'ACC Perpanjangan',
+            value: pendingPpjCount,
+            sublabel: `${unitPpj.length} usulan perpanjangan studi`,
+            icon: CalendarClock,
+          },
+          {
+            label: 'Staf Sedang Belajar',
+            value: activeStudyCount,
+            sublabel: `${unitStaff.length} pegawai terdaftar di unit`,
+            icon: BookOpen,
+          },
+        ]}
+      />
 
       {(activeMenu === 'dashboard' || activeMenu === 'acc_rekomendasi') && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Pengajuan Surat Rekomendasi</h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">{unitRek.length} data</span>
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Pengajuan Surat Rekomendasi</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Tinjau kelayakan rencana studi pegawai sebelum diteruskan ke Admin Daerah/Pusat.
+              </p>
+            </div>
+            <span className="px-2.5 py-1 rounded-md bg-red-50 border border-red-200/80 text-xs font-mono font-bold text-[#A50D26] tabular-nums shrink-0">
+              {unitRek.length} data
+            </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">No. Registrasi</th>
                   <th className="py-3 px-4">Pegawai</th>
                   <th className="py-3 px-4">Universitas & Program Studi</th>
@@ -125,8 +156,8 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
                   </tr>
                 ) : (
                   unitRek.map((r) => (
-                    <tr key={r.id} className="hover:bg-slate-50/70">
-                      <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                    <tr key={r.id}>
+                      <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                         {r.no_registrasi}
                       </td>
                       <td className="py-3.5 px-4">
@@ -148,10 +179,10 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
                         <button
                           type="button"
                           onClick={() => onOpenDossier({ type: 'rekomendasi', id: r.id })}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
                             r.status === 'menunggu_acc_pimpinan'
-                              ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                              : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'
+                              ? 'bg-[#C8102E] hover:bg-[#A50D26] text-white shadow-xs'
+                              : 'bg-white border border-slate-200 hover:border-[#C8102E] hover:text-[#A50D26] text-slate-700'
                           }`}
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -168,15 +199,22 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
       )}
 
       {(activeMenu === 'dashboard' || activeMenu === 'acc_tugas_belajar') && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Pengajuan Tugas Belajar Unit</h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">{unitTb.length} data</span>
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Pengajuan Tugas Belajar Unit</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Daftar pengajuan Tugas Belajar jalur Beasiswa maupun Biaya Mandiri.
+              </p>
+            </div>
+            <span className="px-2.5 py-1 rounded-md bg-red-50 border border-red-200/80 text-xs font-mono font-bold text-[#A50D26] tabular-nums shrink-0">
+              {unitTb.length} data
+            </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">No. Registrasi</th>
                   <th className="py-3 px-4">Pegawai</th>
                   <th className="py-3 px-4">Jalur & Universitas</th>
@@ -186,8 +224,8 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
                 {unitTb.map((t) => (
-                  <tr key={t.id} className="hover:bg-slate-50/70">
-                    <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                  <tr key={t.id}>
+                    <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                       {t.no_registrasi}
                     </td>
                     <td className="py-3.5 px-4">
@@ -211,10 +249,10 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
                       <button
                         type="button"
                         onClick={() => onOpenDossier({ type: 'tugas_belajar', id: t.id })}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
                           t.status === 'menunggu_acc_pimpinan'
-                            ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                            : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'
+                            ? 'bg-[#C8102E] hover:bg-[#A50D26] text-white shadow-xs'
+                            : 'bg-white border border-slate-200 hover:border-[#C8102E] hover:text-[#A50D26] text-slate-700'
                         }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -230,15 +268,22 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
       )}
 
       {(activeMenu === 'dashboard' || activeMenu === 'acc_perpanjangan') && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900">Usulan Perpanjangan Masa Belajar</h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">{unitPpj.length} data</span>
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Usulan Perpanjangan Masa Belajar</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Persetujuan perpanjangan durasi semester studi pegawai unit.
+              </p>
+            </div>
+            <span className="px-2.5 py-1 rounded-md bg-red-50 border border-red-200/80 text-xs font-mono font-bold text-[#A50D26] tabular-nums shrink-0">
+              {unitPpj.length} data
+            </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">No. Registrasi</th>
                   <th className="py-3 px-4">Pegawai & Unit</th>
                   <th className="py-3 px-4">Usulan TMT Selesai</th>
@@ -248,8 +293,8 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
                 {unitPpj.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50/70">
-                    <td className="py-3.5 px-5 font-mono font-semibold text-slate-900">
+                  <tr key={p.id}>
+                    <td className="py-3.5 px-5 font-mono font-bold text-slate-900">
                       {p.no_registrasi}
                     </td>
                     <td className="py-3.5 px-4">
@@ -268,10 +313,10 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
                       <button
                         type="button"
                         onClick={() => onOpenPerpanjangan(p)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
                           p.status === 'menunggu_acc_pimpinan'
-                            ? 'bg-orange-600 hover:bg-orange-700 text-white'
-                            : 'bg-white border border-slate-200 hover:bg-slate-50 text-slate-700'
+                            ? 'bg-[#C8102E] hover:bg-[#A50D26] text-white shadow-xs'
+                            : 'bg-white border border-slate-200 hover:border-[#C8102E] hover:text-[#A50D26] text-slate-700'
                         }`}
                       >
                         <Eye className="w-3.5 h-3.5" />
@@ -287,14 +332,17 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
       )}
 
       {activeMenu === 'monitoring_monev' && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200">
+        <div className="kpi-card overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-900">Monitoring Monev & KHS Staf Unit</h2>
+            <span className="px-2.5 py-1 rounded-md bg-red-50 text-xs font-mono font-bold text-[#A50D26]">
+              {unitMonev.length} laporan
+            </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">Pegawai</th>
                   <th className="py-3 px-4">Kampus & Prodi</th>
                   <th className="py-3 px-4">Semester</th>
@@ -311,16 +359,16 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
                   </tr>
                 ) : (
                   unitMonev.map((m) => (
-                    <tr key={m.id} className="hover:bg-slate-50/70">
+                    <tr key={m.id}>
                       <td className="py-3.5 px-5 font-semibold text-slate-900">{m.user_nama}</td>
                       <td className="py-3.5 px-4">
                         {m.universitas} · {m.program_studi}
                       </td>
                       <td className="py-3.5 px-4 tabular-nums">Smt {m.semester}</td>
-                      <td className="py-3.5 px-4 text-right font-mono font-semibold tabular-nums">
+                      <td className="py-3.5 px-4 text-right font-mono font-bold tabular-nums">
                         {m.ipk_semester.toFixed(2)} / {m.ipk_kumulatif.toFixed(2)}
                       </td>
-                      <td className="py-3.5 px-5 font-semibold text-emerald-700">
+                      <td className="py-3.5 px-5 font-semibold text-emerald-700 capitalize">
                         {m.status_evaluasi.replace('_', ' ')}
                       </td>
                     </tr>
@@ -333,15 +381,17 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
       )}
 
       {activeMenu === 'monitoring_unit' && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <div className="kpi-card overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
             <h2 className="text-base font-bold text-slate-900">Pegawai di {user.unit_kerja_nama}</h2>
-            <span className="text-xs font-mono text-slate-500 tabular-nums">{unitStaff.length} pegawai</span>
+            <span className="px-2.5 py-1 rounded-md bg-red-50 text-xs font-mono font-bold text-[#A50D26] tabular-nums">
+              {unitStaff.length} pegawai
+            </span>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full text-left border-collapse kpi-table">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-semibold text-slate-600">
+                <tr>
                   <th className="py-3 px-5">Nama & NIP</th>
                   <th className="py-3 px-4">Pangkat / Golongan</th>
                   <th className="py-3 px-4">Jabatan</th>
@@ -358,7 +408,7 @@ export const PimpinanDashboard: React.FC<PimpinanDashboardProps> = ({
                   </tr>
                 ) : (
                   unitStaff.map((st) => (
-                    <tr key={st.id} className="hover:bg-slate-50/70">
+                    <tr key={st.id}>
                       <td className="py-3.5 px-5">
                         <p className="font-semibold text-slate-900">{st.nama_lengkap}</p>
                         <p className="font-mono text-[11px] text-slate-500">{st.nip}</p>

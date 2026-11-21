@@ -261,39 +261,52 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const renderSidebarContent = () => (
-    <div className="flex flex-col h-full theme-crimson-hero text-slate-200 select-none border-r border-white/10">
+    <div className="flex flex-col h-full bg-white text-slate-700 select-none border-r border-slate-200">
+      {/* Top Single-Color Brand Accent Bar */}
+      <div className="h-[3px] w-full bg-[#C8102E] shrink-0" />
+
       {/* Institutional Brand */}
-      <div className="h-16 px-4 flex items-center justify-between border-b border-white/10 shrink-0">
+      <div className="h-16 px-4 flex items-center justify-between border-b border-slate-200 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
-          <BasarnasLogo size={34} className="shrink-0" />
+          <BasarnasLogo size={36} className="shrink-0" />
           <div className="min-w-0">
-            <p className="text-sm font-extrabold tracking-tight text-white truncate leading-tight">
-              SITUBEL
-            </p>
-            <p className="text-[11px] text-slate-400 truncate">BASARNAS RI</p>
+            <div className="flex items-center gap-1.5">
+              <p className="text-sm font-extrabold tracking-tight text-slate-900 truncate leading-tight">
+                SITUBEL
+              </p>
+              <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-[#C8102E] text-white leading-none">
+                KPI
+              </span>
+            </div>
+            <p className="text-[11px] font-medium text-slate-500 truncate mt-0.5">BASARNAS RI</p>
           </div>
         </div>
         <button
           type="button"
           onClick={onCloseMobile}
           aria-label="Tutup menu navigasi"
-          className="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-md"
+          className="lg:hidden p-1.5 text-slate-500 hover:text-[#C8102E] hover:bg-[#FDF2F4] rounded-md"
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
-      {/* Role context summary */}
-      <div className="px-4 py-3 border-b border-white/10 bg-black/15 shrink-0">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-red-400 truncate">
-          {getRoleDisplayLabel(user.role)}
-        </p>
-        <p className="text-xs font-semibold text-white truncate mt-0.5" title={user.unit_kerja_nama}>
-          {user.unit_kerja_nama}
-        </p>
+      {/* Role Context Card — Clean White & Soft Red */}
+      <div className="px-3.5 py-3 border-b border-slate-200 shrink-0">
+        <div className="rounded-lg bg-[#FDF2F4] border border-[#F5C6CE] px-3 py-2.5">
+          <div className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C8102E] shrink-0" aria-hidden="true" />
+            <p className="text-[10px] font-bold uppercase tracking-wider text-[#A50D26] truncate">
+              {getRoleDisplayLabel(user.role)}
+            </p>
+          </div>
+          <p className="text-xs font-bold text-slate-900 truncate mt-1" title={user.unit_kerja_nama}>
+            {user.unit_kerja_nama}
+          </p>
+        </div>
       </div>
 
-      {/* Navigation groups — sleek dark thin scrollbar */}
+      {/* Navigation groups */}
       <nav
         aria-label="Navigasi utama SITUBEL"
         className="flex-1 min-h-0 overflow-y-auto sidebar-scroll px-3 py-3.5 space-y-4 overscroll-contain"
@@ -305,7 +318,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 type="button"
                 onClick={() => toggleGroup(group.id)}
-                className="w-full flex items-center justify-between px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition-colors"
+                className="w-full flex items-center justify-between px-2 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500 hover:text-[#C8102E] transition-colors"
               >
                 <span className="truncate">{group.label}</span>
                 {isCollapsed ? (
@@ -315,7 +328,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
               </button>
               {!isCollapsed && (
-                <ul className="mt-1 space-y-0.5">
+                <ul className="mt-1.5 space-y-0.5">
                   {group.items.map((item) => {
                     const Icon = item.icon;
                     const active = activeMenu === item.id;
@@ -327,16 +340,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             onSelectMenu(item.id);
                             onCloseMobile();
                           }}
-                          className={`w-full flex items-center justify-between gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${
+                          className={`relative w-full flex items-center justify-between gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-150 ${
                             active
-                              ? 'bg-orange-600 text-white font-semibold shadow-sm'
-                              : 'text-slate-300 hover:bg-white/[0.07] hover:text-white'
+                              ? 'bg-[#C8102E] text-white font-semibold shadow-xs'
+                              : 'text-slate-700 hover:bg-[#FDF2F4] hover:text-[#C8102E]'
                           }`}
                         >
                           <span className="flex items-center gap-2.5 min-w-0">
                             <Icon
                               className={`w-4 h-4 shrink-0 ${
-                                active ? 'text-white' : 'text-slate-400'
+                                active ? 'text-white' : 'text-slate-500'
                               }`}
                             />
                             <span className="truncate">{item.label}</span>
@@ -345,8 +358,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             <span
                               className={`min-w-[20px] h-5 px-1.5 rounded-md text-[10px] font-mono font-bold tabular-nums inline-flex items-center justify-center shrink-0 ${
                                 active
-                                  ? 'bg-white/20 text-white'
-                                  : 'bg-red-500/20 text-red-300'
+                                  ? 'bg-white text-[#C8102E]'
+                                  : 'bg-[#C8102E] text-white'
                               }`}
                             >
                               {item.badge}
@@ -363,30 +376,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Anchored Bottom Account Footer — always flush at bottom, never floats */}
-      <div className="px-3 py-3 border-t border-white/10 bg-black/20 shrink-0">
+      {/* Anchored Bottom Account Footer */}
+      <div className="px-3 py-3 border-t border-slate-200 bg-slate-50/70 shrink-0">
         <button
           type="button"
           onClick={() => {
             onSelectMenu('setting_profil');
             onCloseMobile();
           }}
-          className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-colors ${
+          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors duration-150 ${
             activeMenu === 'setting_profil'
-              ? 'bg-orange-600 text-white font-semibold shadow-sm'
-              : 'text-slate-300 hover:bg-white/[0.07] hover:text-white'
+              ? 'bg-[#C8102E] text-white font-semibold shadow-xs'
+              : 'text-slate-700 hover:bg-[#FDF2F4] hover:text-[#C8102E]'
           }`}
         >
           <UserCog
             className={`w-4 h-4 shrink-0 ${
-              activeMenu === 'setting_profil' ? 'text-white' : 'text-slate-400'
+              activeMenu === 'setting_profil' ? 'text-white' : 'text-slate-500'
             }`}
           />
           <div className="min-w-0 text-left flex-1">
             <p className="truncate leading-tight">Pengaturan Profil</p>
             <p
               className={`text-[10px] truncate mt-0.5 ${
-                activeMenu === 'setting_profil' ? 'text-red-100' : 'text-slate-400'
+                activeMenu === 'setting_profil' ? 'text-white/95' : 'text-slate-500'
               }`}
             >
               {user.nama_lengkap}

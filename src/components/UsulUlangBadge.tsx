@@ -12,7 +12,7 @@ export const UsulUlangBadge: React.FC<UsulUlangBadgeProps> = ({ usedCount, maxAl
   if (usedCount === 0) return null;
 
   return (
-    <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-800 tabular-nums">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-100/90 text-xs font-bold text-amber-900 tabular-nums">
       <RotateCcw className="w-3.5 h-3.5 shrink-0" />
       Usul Ulang ke-{usedCount} (sisa {quota.remaining}/{quota.max})
     </span>

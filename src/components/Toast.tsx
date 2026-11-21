@@ -32,8 +32,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const showToast = useCallback(
     (type: ToastType, title: string, message?: string) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-      setToasts((prev) => [...prev, { id, type, title, message }]);
-      window.setTimeout(() => dismiss(id), 4500);
+      setToasts((prev) => [...prev.slice(-1), { id, type, title, message }]);
+      window.setTimeout(() => dismiss(id), 3200);
     },
     [dismiss]
   );
@@ -63,7 +63,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div
             key={item.id}
             role="status"
-            className="pointer-events-auto bg-white border border-slate-200 rounded-lg shadow-lg p-3.5 flex items-start gap-3 transition-all duration-150"
+            className="pointer-events-auto bg-white border border-slate-200 border-l-4 border-l-[#C8102E] rounded-lg shadow-xl p-3.5 flex items-start gap-3 transition-all duration-150"
           >
             {renderIcon(item.type)}
             <div className="flex-1 min-w-0">
